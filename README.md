@@ -1,6 +1,6 @@
 # django-dsgovbr
 
-
+Compliance com o https://www.gov.br/ds/home 
 
 ## Getting started
 
