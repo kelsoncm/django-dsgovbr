@@ -1,14 +1,368 @@
 {% load i18n static %}
+<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
 
-{% block stylesheet_rtl %}{% if LANGUAGE_BIDI %}
-    <link rel="stylesheet" type="text/css" href="{% static '/vendors/admin/css/rtl.css' %}"/>
-{% endif %}{% endblock stylesheet_rtl %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>{% block title %}{% endblock %}</title>
 
-{% block responsive %}
+  <!-- Fontes -->
+  <link rel="stylesheet" href="https://cdngovbr-ds.estaleiro.serpro.gov.br/design-system/fonts/rawline/css/rawline.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700,800,900&amp;display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" />
+
+  <!-- Design System de Governo-->
+  <link rel="stylesheet" href="{% static 'vendors/serpro/core.min.css' %}" />
+
+  {% comment %}
+    <link rel="stylesheet" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}">
+  {% endcomment %}
+  {% block dark-mode-vars %}
     {% comment %}
-        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-        <link rel="stylesheet" type="text/css" href="{% static '/vendors/admin/css/responsive.css' %}"/>
-        {% if LANGUAGE_BIDI %}
-            <link rel="stylesheet" type="text/css" href="{% static '/vendors/admin/css/responsive_rtl.css' %}"/>
-        {% endif %} {% endcomment %}
-{% endblock responsive %}
+      <link rel="stylesheet" href="{% static "admin/css/dark_mode.css" %}">
+      <script src="{% static "admin/js/theme.js" %}"></script>
+    {% endcomment %}
+  {% endblock %}
+  {% if not is_popup and is_nav_sidebar_enabled %}
+    {% comment %}
+      <link rel="stylesheet" href="{% static "admin/css/nav_sidebar.css" %}">
+      <script src="{% static 'admin/js/nav_sidebar.js' %}" defer></script>
+    {% endcomment %}
+  {% endif %}
+  {% block extrastyle %}
+  {% endblock %}
+  {% comment %}
+    {% if LANGUAGE_BIDI %}
+      <link rel="stylesheet" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}">
+    {% endif %}
+  {% endcomment %}
+  {% block extrahead %}
+  {% endblock %}
+  {% block responsive %}
+  {% comment %}
+    <link rel="stylesheet" href="{% static "admin/css/responsive.css" %}">
+    {% if LANGUAGE_BIDI %}
+      <link rel="stylesheet" href="{% static "admin/css/responsive_rtl.css" %}">
+    {% endif %}
+  {% endcomment %}
+  {% endblock %}
+  {% block blockbots %}
+    <meta name="robots" content="NONE,NOARCHIVE">
+  {% endblock %}
+</head>
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now "Z" %}">
+  <div class="template-base">
+
+    <nav class="br-skiplink" role="menubar">
+      <a class="br-item" href="#main-content" role="menuitem" accesskey="1">
+        Ir para o conteúdo
+        <span aria-hidden="true">(1/4)</span>
+        <span aria-hidden="true" class="br-tag text ml-1">1</span>
+      </a>
+      <a class="br-item" href="#header-navigation" role="menuitem" accesskey="2">
+        Ir para o menu
+        <span aria-hidden="true">(2/4)</span>
+        <span aria-hidden="true" class="br-tag text ml-1">2</span>
+      </a>
+      <a class="br-item" href="#main-searchbox" role="menuitem" accesskey="3">
+        Ir para a busca
+        <span aria-hidden="true">(3/4)</span>
+        <span aria-hidden="true" class="br-tag text ml-1">3</span>
+      </a>
+      <a class="br-item" href="#footer" role="menuitem" accesskey="4">
+        Ir para o rodapé
+        <span aria-hidden="true">(4/4)</span>
+          <span aria-hidden="true" class="br-tag text ml-1">4</span>
+      </a>
+    </nav>
+
+    {% if not is_popup %}
+      {% block header %}
+        <header class="br-header mb-4" id="header" data-sticky="data-sticky">
+          <div class="container-fluid">
+            <div class="header-top">
+
+              {% block branding %}
+                <div class="header-logo">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/500px-Gov.br_logo.svg.png" alt="logo">
+                  <span class="br-divider vertical"></span>
+                  <div class="header-sign">{{ app_label }}</div>
+                </div>
+              {% endblock branding %}
+
+              <div class="header-actions">
+
+                {% block fast_access_links %}
+                  {% if fast_access_links %}
+                    <div class="header-links dropdown">
+                      <button class="br-button circle small" type="button" data-toggle="dropdown" aria-label="Abrir Acesso Rápido">
+                        <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
+                      </button>
+                      <div class="br-list">
+                        <div class="header">
+                          <div class="title">Acesso Rápido</div>
+                        </div>
+                        {% for fast_access in fast_access_links %}
+                          <a class="br-item" href="{{ fast_access.url }}">{{ fast_access.label }}</a>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    <span class="br-divider vertical mx-half mx-sm-1"></span>
+                  {% endif %}
+                {% endblock fast_access_links %}
+
+                {% block feature_links %}
+                  {% if feature_links %}
+                    <div class="header-functions dropdown">
+                      <button class="br-button circle small" type="button" data-toggle="dropdown" aria-label="Abrir Funcionalidades do Sistema">
+                        <i class="fas fa-th" aria-hidden="true"></i>
+                      </button>
+                      <div class="br-list">
+                        <div class="header">
+                          <div class="title">Funcionalidades do Sistema</div>
+                        </div>
+                        {% for feature in feature_links %}
+                          <div class="br-item">
+                            <button class="br-button circle small" type="button" aria-label="{{ feature.label }}">
+                              <i class="{{ feature.icon }}" aria-hidden="true"></i>
+                              <span class="text">{{ feature.label }}</span>
+                            </button>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  {% endif %}
+                {% endblock feature_links %}
+                
+                {% block user_login %}
+                  {% if user.is_anonymous %}
+                    <div class="header-login">
+                      <div class="header-sign-in">
+                        <button class="br-sign-in small" type="button" data-trigger="login"><i class="fas fa-user" aria-hidden="true"></i><span class="d-sm-inline">Entrar</span>
+                        </button>
+                      </div>
+                      <div class="header-avatar"></div>
+                    </div>
+                  {% else %}
+                      <div>
+                        <div class="header-avatar">
+                          <div class="avatar">
+                            <div class="mr-3 ml-2 text-right">
+                              <span>{% firstof user.get_short_name user.get_username %}</span>
+                              <span class="d-block">{{ user.username }}</span>
+                            </div>
+                            <span class="br-avatar" title="KELSON DA COSTA MEDEIROS">
+                              <span class="image" style="border: 2px solid rgb(204, 204, 204);">
+                                <img id="user_image" alt="avatar" src="https://cdn-icons-png.freepik.com/512/6596/6596121.png" width="40" height="40">
+                              </span>
+                            </span>
+                            {% comment %}
+                              <div class="dropdown">
+                                <button type="button" id="dropdownMenuAvatar" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="br-button circle small">
+                                  <i aria-hidden="true" class="fas fa-angle-down"></i>
+                                </button>
+                                <div class="container-lg">
+                                  <div aria-labelledby="dropdownMenuAvatar" class="dropdown-menu">
+                                    <form novalidate="" class="ng-untouched ng-pristine ng-invalid">
+                                      <div class="content px-2 py-1">
+                                        <button type="button" aria-label="sair com segurança" class="br-button small btn-sair text-base" title="sair com segurança">
+                                          Sair&nbsp;&nbsp; 
+                                          <i aria-hidden="true" class="fa-solid fa-right-from-bracket text-up-01"></i>
+                                        </button>
+                                        <div class="col-12 titulo">Minha conta</div>
+                                        <div class="row">
+                                          <div class="col-2 d-flex no-wrap text-info align-items-center justify-content-center dados-contribuinte">
+                                            <em class="fas fa-user"></em>
+                                          </div>
+                                          <div class="col-10 dados-contribuinte">
+                                            <p class="font-weight-bold font-size-scale-down-01"> KELSON DA COSTA MEDEIROS </p>
+                                            <p class="d-block">CPF: 645.834.571-20</p>
+                                          </div>
+                                        </div>
+                                        <div class="col-12">
+                                          <div class="row">
+                                            <div class="col-10">
+                                              <p class="pt-2"> A sua conta é nível&nbsp; 
+                                                <span class="font-weight-bold">OURO</span>
+                                              </p>
+                                            </div>
+                                            <div class="col-2 text-info">
+                                              <button type="button" id="ajudaGovBr" aria-label="Ajuda" class="br-button circle small" title="Ajuda">
+                                                <i aria-hidden="true" title="Ajuda" class="fas fa-question-circle"></i>
+                                              </button>
+                                            </div>
+                                            <div class="col-12 d-flex pt-3 pb-5 conta-ouro">
+                                              <span class="nivel col-4"></span>
+                                              <span class="nivel col-4"></span>
+                                              <span class="nivel col-4"></span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            {% endcomment %}
+                          </div>
+                        </div>
+                      </div>
+                  {% endif %}
+                {% endblock user_login %}
+              </div>
+            </div>
+
+            <div class="header-bottom">
+              <div class="header-menu">
+                
+                {% block header_menu_trigger %}
+                  {% if have_header_menu_trigger %}
+                    <div class="header-menu-trigger" id="header-navigation">
+                      <button class="br-button small circle" type="button" aria-label="Menu" data-toggle="menu" data-target="#main-navigation" id="navigation"><i class="fas fa-bars" aria-hidden="true"></i></button>
+                    </div>
+                  {% endif %}                    
+                {% endblock header_menu_trigger %}
+
+                <div class="header-info">
+                  <div class="header-title">
+                    {% block system_content_title %}{% if title %}{{ title }}{% endif %}{% endblock system_content_title %}
+                  </div>
+                  <div class="header-subtitle">
+                    {% block system_content_subtitle %}{% if subtitle %}{{ subtitle }}{% endif %}{% endblock system_content_subtitle %}
+                  </div>
+                </div>
+              </div>
+
+              {% if have_site_search %}
+                {% block site_search %}
+                  <div class="header-search" id="main-searchbox">
+                    <div class="br-input has-icon">
+                      <label for="searchbox">Texto da pesquisa</label>
+                      <input id="searchbox" type="text" placeholder="O que você procura?"/>
+                      <button class="br-button circle small" type="button" aria-label="Pesquisar">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <button class="br-button circle search-close ml-1" type="button" aria-label="Fechar Busca" data-dismiss="search">
+                      <i class="fas fa-times" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                {% endblock site_search %}
+              {% endif  %}
+            </div>
+          </div>
+        </header>
+      {% endblock %}
+    {% endif %}
+    
+    <div id="container">
+      <main class="d-flex flex-fill mb-5" id="main">
+        <div class="container-fluid d-flex">
+          <div class="row">
+            <div class="br-menu" id="main-navigation">
+
+            </div>
+            <div class="col mb-5">
+              {% block breadcrumb %}
+                <nav class="br-breadcrumb">
+                  <ol class="crumb-list" role="list">
+                    <li class="crumb home"><a class="br-button circle" href="/"><span class="sr-only">Página inicial</span><i class="fas fa-home"></i></a></li>
+                    {% for bread in breadcrumb %}
+                      <li class="crumb"><i class="icon fas fa-chevron-right"></i><a href="{{ bread.url }}">{{ bread.label }}</a></li>
+                    {% endfor %}
+                    <li class="crumb" data-active="active"><i class="icon fas fa-chevron-right"></i><span tabindex="0" aria-current="page">{{ title }}</span></li>
+                  </ol>
+
+                </nav>
+              {% endblock breadcrumb %}
+
+              {% comment %}
+                {% if not is_popup and is_nav_sidebar_enabled %}
+                  {% block nav-sidebar %}
+                    {% include "admin/nav_sidebar.html" %}
+                  {% endblock %}
+                {% endif %}
+              {% endcomment %}
+
+              {% block messages %}
+                {% if messages %}
+                  <ul class="messagelist">{% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message|capfirst }}</li>
+                      {% endfor %}
+                  </ul>
+                {% endif %}
+              {% endblock messages %}
+
+              <div class="main-content pl-sm-3 mt-4" id="main-content">
+                
+                {% block pretitle %}
+                {% endblock pretitle %}
+
+                <h1>
+                  {% block content_title %}
+                    {% if title %}
+                      {{ title }}
+                    {% endif %}
+                  {% endblock content_title %}
+                </h1>
+
+                <h2>
+                  {% block content_subtitle %}
+                    {% if subtitle %}
+                      {{ subtitle }}
+                    {% endif %}
+                  {% endblock %}
+                </h2>
+
+                <!-- Content -->
+                <div id="content" class="{% block coltype %}colM{% endblock %}">
+
+                  {% block object-tools %}
+                  {% endblock %}
+
+                  {% block content %}
+                    {{ content }}
+                  {% endblock %}
+
+                  {% block sidebar %}
+                  {% endblock %}
+
+                  <br class="clear">
+                </div>
+                <!-- END Content -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+
+    {% if not is_popup %}
+      <footer class="br-footer pt-3" id="footer">
+        <div class="container-fluid">
+          <div class="info">
+            <div class="text-down-01 text-medium pb-3">
+              {% block footer %}
+              © 2025 IFRN — Integrador v{{ app_version }}. Licença MIT. Veja os <strong><a href="https://opensource.org/license/mit" target="_blank">termos da
+                  “Licença”</a></strong>.
+              <!-- app_last_startup:{{ app_last_startup }} -->
+              {% endblock %}
+            </div>
+          </div>
+        </div>
+      </footer>
+    {% endif %}
+
+  </div>
+
+  <script src="{% static 'vendors/serpro/core-init.js' %}"></script>
+  {% block extrabody %}
+  {% endblock extrabody %}
+</body>
+
+</html>
