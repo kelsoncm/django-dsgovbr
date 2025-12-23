@@ -1,31 +1,71 @@
-# You can override the included template(s) by including variable overrides
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Secret Detection customization: https://docs.gitlab.com/user/application_security/secret_detection/pipeline/configure
-# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
-- build
-- test
-- deploy
-- review
-- dast
-- staging
-- canary
-- production
-- incremental rollout 10%
-- incremental rollout 25%
-- incremental rollout 50%
-- incremental rollout 100%
-- performance
-- cleanup
-- secret-detection
-sast:
-  stage: test
-include:
-- template: Auto-DevOps.gitlab-ci.yml
+  - staticcheck
+  - build
+  - test
+  - publish
+  - deploy
+  - review
+  - dast
+  - staging
+  - canary
+  - production
+  - incremental rollout 10%
+  - incremental rollout 25%
+  - incremental rollout 50%
+  - incremental rollout 100%
+  - performance
+  - cleanup
+  - secret-detection
 variables:
-  SECRET_DETECTION_ENABLED: 'true'
-secret_detection:
-  stage: secret-detection
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip-cache"
+
+
+# sast:
+#   stage: staticcheck
+# include:
+#   - template: Auto-DevOps.gitlab-ci.yml
+# variables:
+#   SECRET_DETECTION_ENABLED: 'true'
+
+# secret_detection:
+#   stage: staticcheck
+
+build:
+  stage: build
+  image: python:3.10
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install build twine
+  script:
+    - python -m build
+  artifacts:
+    paths:
+      - dist/
+
+test:
+  stage: test
+  parallel:
+    matrix:
+      - PYTHON_VERSION: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        DJANGO_VERSION: ["4.2", "5.2", "6.0"]
+  image: python:$PYTHON_VERSION
+  script:
+    - python -m pip install --upgrade pip
+    - pip install "django~=${DJANGO_VERSION}" pytest
+    - pip install dist/*.whl
+    - pytest
+
+publish:
+  stage: publish
+  image: python:3.10
+  rules:
+    - if: $CI_COMMIT_TAG
+  before_script:
+    - python --version
+    - pip install --upgrade pip
+    - pip install twine
+  script:
+    # PYPI_TOKEN deve ser configurado nas variáveis do projeto
+    - TWINE_USERNAME="__token__" TWINE_PASSWORD="$PYPI_TOKEN" \
+      python -m twine upload dist/*
