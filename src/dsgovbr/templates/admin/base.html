@@ -265,7 +265,50 @@
           <div class="row">
             <div class="br-menu" id="main-navigation">
 
-            </div>
+              <div class="menu-container">
+                <div class="menu-panel col-sm-4 col-lg-3">
+                  <div class="menu-header">
+                    <div class="menu-title">
+                      <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Gov.br_logo.svg/500px-Gov.br_logo.svg.png"
+                        alt="Imagem ilustrativa">
+                      <span> Integrador AVA</span>
+                    </div>
+                    <div class="menu-close">
+                      <button class="br-button circle" type="button" aria-label="Fechar o menu" data-dismiss="menu">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <nav class="menu-body" role="tree">
+                    <div class="menu-folder drop-menu">
+                      {% include 'admin/app_list.html' with app_list=available_apps show_changelinks=False %}
+                    </div>
+                  </nav>
+                   
+                  <div class="menu-footer">
+                    <div class="menu-links">
+                      <a href="javascript: void(0)">
+                        <span class="mr-1">Link externo 1</span>
+                        <i class="fas fa-external-link-square-alt" aria-hidden="true"></i>
+                      </a>
+                      <a href="javascript: void(0)">
+                        <span class="mr-1">Link externo 2</span>
+                        <i class="fas fa-external-link-square-alt" aria-hidden="true"></i>
+                      </a>
+                    </div>
+
+                    <div class="menu-info">
+                    </div>
+
+                  </div>
+                </div>
+                <div class="menu-scrim" data-dismiss="menu" tabindex="0"></div>
+              </div>
+
+            </div><!-- #main-navigation -->
+
             <div class="col mb-5">
               {% block breadcrumb %}
                 <nav class="br-breadcrumb">
@@ -360,7 +403,7 @@
 
   </div>
 
-  <script src="{% static 'vendors/serpro/core-init.js' %}"></script>
+  <script src="{% static 'vendors/serpro/core-init.min.js' %}"></script>
   {% block extrabody %}
   {% endblock extrabody %}
 </body>
