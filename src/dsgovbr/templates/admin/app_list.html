@@ -3,50 +3,42 @@
 {% if app_list %}
 
   {% for app in app_list %}
-    <a class="menu-item" href="javascript:void(0)" role="treeitem"  >
-      <span class="icon">
-        <i class="fas fa-user"></i>
-      </span>
-      <span class="content">
-        {{ app.name }}
-      </span>
-      <span class="support">
-        <i class="fas fa-angle-right"></i>
-      </span>
-    </a>
+    <div class="menu-folder drop-menu">
+      <a class="menu-item" href="javascript:void(0)" role="treeitem">
+        <span class="icon"><i class="fas fa-user"></i></span>
+        <span class="content">{{ app.name }}</span>
+        <span class="support"><i class="fas fa-angle-right"></i></span>
+      </a>
 
-    <ul role="tree" aria-label="{{ app.name }}">
-      {% for model in app.models %}
-        {% if model.admin_url %}
-          <li>
-            <a href="{{ model.admin_url }}" class="menu-item">
-               {{ model.name }}
-            </a>
-          </li>
-        {% endif %}
+      <ul role="tree" aria-label="{{ app.name }}">
+        {% for model in app.models %}
+          {% if model.admin_url %}
+            <li>
+              <a href="{{ model.admin_url }}" class="menu-item">
+                  {{ model.name }}
+              </a>
+            </li>
+          {% endif %}
 
-        {% if model.admin_url and show_changelinks %}
-          <li>
-            <a href="{{ model.admin_url }}" class="menu-item">
-              {% if model.view_only %}
-                {% translate 'View' %}
-              {% else %}
-                {% translate 'Change' %}
-              {% endif %}
-              {{ model.name }}
-            </a>
-          </li>
-        {% endif %}
+          {% if model.admin_url and show_changelinks %}
+            <li>
+              <a href="{{ model.admin_url }}" class="menu-item">
+                {% if model.view_only %}
+                  {% translate 'View' %}
+                {% else %}
+                  {% translate 'Change' %}
+                {% endif %}
+                {{ model.name }}
+              </a>
+            </li>
+          {% endif %}
 
-      {% empty %}
-        <li>{% translate 'No models available.' %}</li>
-
-      {% endfor %}
-
-    </ul>
-
+        {% empty %}
+          <li>{% translate 'No models available.' %}</li>
+        {% endfor %}
+      </ul>
+    </div>
   {% endfor %}
-
 {% else %}
   <p>{% translate 'You don’t have permission to view or edit anything.' %}</p>
 {% endif %}
