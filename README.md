@@ -308,6 +308,26 @@ Contribuições são bem-vindas! Por favor:
 - 🔄 Em desenvolvimento: Widgets customizados
 - 📋 Planejado: Componentes JavaScript interativos
 
+### 🚀 Próximos Passos
+
+Planejamos adicionar nas próximas versões:
+
+- Widgets customizados para formulários
+- Componentes JavaScript interativos
+- Mais templates de exemplo
+- Suporte a temas customizados
+- Documentação expandida
+
+
+### 🙏 Agradecimentos
+
+Agradecemos à equipe do Design System Gov.BR por criar e manter o design system oficial do governo federal brasileiro.
+
+
+### 📧 Feedback
+
+Encontrou algum problema ou tem sugestões? Abra uma [issue](vscode-file://vscode-app/c:/Users/2080882/AppData/Local/Programs/Microsoft%20VS%20Code/resources/app/out/vs/code/electron-browser/workbench/workbench.html) ou contribua com um pull request!
+
 ---
 
 **Desenvolvido com ❤️ para o ecossistema Gov.BR**
