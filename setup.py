@@ -20,7 +20,7 @@ setup(
     long_description_content_type='text/markdown',
     url='https://codelab.ifrn.edu.br/dead-zl/ava/integration/django-dsgovbr',
     author='Kelson da Costa Medeiros', # Placeholder, change if needed
-    author_email='kelson.medeiros@ifrn.edu.br', # Placeholder, change if needed
+    author_email='kelsoncm@gmail.com', # Placeholder, change if needed
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',

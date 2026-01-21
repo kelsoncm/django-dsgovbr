@@ -1,93 +1,313 @@
-# django-dsgovbr
+# Django DSGovBR
 
-Compliance com o https://www.gov.br/ds/home 
+[![PyPI version](https://badge.fury.io/py/django-dsgovbr.svg)](https://badge.fury.io/py/django-dsgovbr)
+[![Python Versions](https://img.shields.io/pypi/pyversions/django-dsgovbr.svg)](https://pypi.org/project/django-dsgovbr/)
+[![Django Versions](https://img.shields.io/badge/django-5.2-blue.svg)](https://www.djangoproject.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Getting started
+Pacote Django para integração com o [Design System do Governo Federal Brasileiro (DS Gov.BR)](https://www.gov.br/ds/home).
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## 📋 Sobre
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+O **django-dsgovbr** facilita a implementação do Design System oficial do Governo Federal em projetos Django, inclusive no Django Admin, garantindo conformidade visual e de usabilidade com os padrões estabelecidos pelo gov.br.
 
-## Add your files
+### 🎨 Design System Gov.BR
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+O [DS Gov.BR](https://www.gov.br/ds/home) é o design system oficial do Governo Federal Brasileiro, criado para padronizar a experiência do usuário em todos os portais e sistemas governamentais.
+
+**Links Oficiais:**
+- 🏠 [Site Oficial](https://www.gov.br/ds/home)
+- 📚 [Documentação](https://www.gov.br/ds/fundamentos-visuais/visao-geral)
+- 🎨 [Fundamentos Visuais](https://www.gov.br/ds/fundamentos-visuais/introducao)
+- 🧩 [Componentes](https://www.gov.br/ds/componentes/overview)
+- 📐 [Padrões](https://www.gov.br/ds/padroes/introducao)
+- 💾 [Download dos Assets](https://www.gov.br/ds/recursos/downloads)
+
+### ✨ Recursos Visuais do DS Gov.BR
+
+O Design System inclui:
+
+#### Componentes Principais
+- **Formulários**: Inputs, selects, checkboxes, radio buttons estilizados
+- **Botões**: Primários, secundários, terciários com estados hover/active/disabled
+- **Mensagens**: Alertas, notificações e mensagens de sistema
+- **Navegação**: Headers, breadcrumbs, menus e abas
+- **Tabelas**: Grades de dados responsivas e acessíveis
+- **Cards**: Cartões informativos e de conteúdo
+- **Modal**: Diálogos e janelas modais
+- **Paginação**: Controles de navegação entre páginas
+
+#### Características Visuais
+- 🎨 **Paleta de Cores Oficial**: Azul Gov.BR (#071D41), cores de status e feedbacks
+- 📱 **Design Responsivo**: Mobile-first, adaptável a todos os dispositivos
+- ♿ **Acessibilidade**: WCAG 2.1 nível AA, suporte a leitores de tela
+- 🔤 **Tipografia Rawline**: Fonte oficial do governo federal
+- 📐 **Grid System**: Sistema de grid consistente (12 colunas)
+- 🖼️ **Ícones**: Biblioteca Font Awesome com ícones customizados
+
+#### Visual do DS Gov.BR
 
 ```
-cd existing_repo
-git remote add origin https://codelab.ifrn.edu.br/dead-zl/ava/integration/django-dsgovbr.git
-git branch -M main
-git push -uf origin main
+┌─────────────────────────────────────────────┐
+│  🏛️  GOVERNO FEDERAL                        │
+│  ═══════════════════════════════════        │
+│                                             │
+│  ┌─────────────────────────────────────┐    │
+│  │  🔵 Botão Primário                  │    │
+│  └─────────────────────────────────────┘    │
+│                                             │
+│  ┌─────────────────────────────────────┐    │
+│  │  ⚪ Botão Secundário                │    │
+│  └─────────────────────────────────────┘    │
+│                                             │
+│  ℹ️  Mensagem Informativa                   │
+│  ✓  Mensagem de Sucesso                     │
+│  ⚠️  Mensagem de Aviso                      │
+│  ✕  Mensagem de Erro                        │
+│                                             │
+└─────────────────────────────────────────────┘
 ```
 
-## Integrate with your tools
+> **Nota**: Para capturas de tela reais dos componentes, visite a [página de componentes oficial](https://www.gov.br/ds/componentes/overview) do DS Gov.BR.
 
-- [ ] [Set up project integrations](https://codelab.ifrn.edu.br/dead-zl/ava/integration/django-dsgovbr/-/settings/integrations)
+## 🚀 Instalação
 
-## Collaborate with your team
+### Via PyPI (Recomendado)
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+```bash
+pip install django-dsgovbr
+```
 
-## Test and Deploy
+## ⚙️ Configuração
 
-Use the built-in continuous integration in GitLab.
+### 1. Adicione ao INSTALLED_APPS
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+```python
+# settings.py
 
-***
+INSTALLED_APPS = [
+    # ... outras apps
+    'dsgovbr',
+    # ... suas apps
+]
+```
 
-# Editing this README
+### 2. Configure os Context Processors (Opcional)
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+```python
+# settings.py
 
-## Suggestions for a good README
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                # ... outros context processors
+                'dsgovbr.context_processors.dsgovbr',
+            ],
+        },
+    },
+]
+```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### 3. Colete os Arquivos Estáticos
 
-## Name
-Choose a self-explaining name for your project.
+```bash
+python manage.py collectstatic
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+## 📖 Uso
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Templates Base
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Use os templates base do DSGovBR nos seus templates Django:
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+```django
+{% extends "admin/base.html" %}
+{% load static %}
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+{% block title %}Minha Página Gov.BR{% endblock %}
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+{% block content %}
+<div class="br-container">
+    <h1>Bem-vindo ao Sistema</h1>
+    
+    <!-- Botão Primário -->
+    <button class="br-button primary" type="button">
+        Ação Principal
+    </button>
+    
+    <!-- Mensagem de Sucesso -->
+    <div class="br-message success">
+        <div class="icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="content">
+            Operação realizada com sucesso!
+        </div>
+    </div>
+    
+    <!-- Card -->
+    <div class="br-card">
+        <div class="card-header">
+            <h3>Título do Card</h3>
+        </div>
+        <div class="card-content">
+            <p>Conteúdo do card seguindo o padrão Gov.BR</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### Formulários Django
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+Os formulários Django automaticamente usam os estilos do DS Gov.BR:
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+```python
+# forms.py
+from django import forms
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+class MeuFormulario(forms.Form):
+    nome = forms.CharField(
+        label="Nome Completo",
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'br-input',
+            'placeholder': 'Digite seu nome'
+        })
+    )
+    
+    email = forms.EmailField(
+        label="E-mail",
+        widget=forms.EmailInput(attrs={
+            'class': 'br-input',
+            'placeholder': 'seuemail@exemplo.gov.br'
+        })
+    )
+    
+    mensagem = forms.CharField(
+        label="Mensagem",
+        widget=forms.Textarea(attrs={
+            'class': 'br-textarea',
+            'rows': 5
+        })
+    )
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### Admin do Django
 
-## License
-For open source projects, say how it is licensed.
+O pacote fornece templates customizados para o Django Admin com visual Gov.BR:
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+```python
+# admin.py
+from django.contrib import admin
+from .models import MeuModelo
+
+@admin.register(MeuModelo)
+class MeuModeloAdmin(admin.ModelAdmin):
+    list_display = ['nome', 'status', 'data_criacao']
+    list_filter = ['status']
+    search_fields = ['nome']
+```
+
+## 🎨 Componentes Disponíveis
+
+### Classes CSS Principais
+
+```html
+<!-- Botões -->
+<button class="br-button primary">Primário</button>
+<button class="br-button secondary">Secundário</button>
+<button class="br-button tertiary">Terciário</button>
+
+<!-- Mensagens -->
+<div class="br-message info">Informação</div>
+<div class="br-message success">Sucesso</div>
+<div class="br-message warning">Aviso</div>
+<div class="br-message error">Erro</div>
+
+<!-- Cards -->
+<div class="br-card">
+    <div class="card-header">Cabeçalho</div>
+    <div class="card-content">Conteúdo</div>
+    <div class="card-footer">Rodapé</div>
+</div>
+
+<!-- Inputs -->
+<input type="text" class="br-input" placeholder="Digite aqui...">
+<textarea class="br-textarea"></textarea>
+<select class="br-select">
+    <option>Opção 1</option>
+</select>
+```
+
+## 🔧 Desenvolvimento
+
+### Requisitos
+
+- Python 3.10+
+- Django 5.2+
+
+### Setup para Desenvolvimento
+
+```bash
+# Clone o repositório
+git clone https://github.com/kelsoncm/django-dsgovbr.git
+cd django-dsgovbr
+
+# Crie um ambiente virtual
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# ou
+venv\Scripts\activate  # Windows
+
+# Instale as dependências de desenvolvimento
+pip install -e ".[dev]"
+
+# Execute os testes
+python -m pytest
+```
+
+## 📝 Licença
+
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## 👥 Contribuindo
+
+Contribuições são bem-vindas! Por favor:
+
+1. Faça um Fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
+4. Push para a branch (`git push origin feature/MinhaFeature`)
+5. Abra um Pull Request
+
+## 📧 Contato
+
+**Kelson da Costa Medeiros**
+- Email: kelsoncm@gmail.com
+- GitHub: [@kelsoncm](https://github.com/kelsoncm)
+
+## 🔗 Links Úteis
+
+- [Design System Gov.BR - Site Oficial](https://www.gov.br/ds/home)
+- [DS Gov.BR - Componentes](https://www.gov.br/ds/componentes/overview)
+- [DS Gov.BR - GitHub](https://github.com/govbr-ds)
+- [Documentação Django](https://docs.djangoproject.com/)
+- [Acessibilidade Gov.BR](https://www.gov.br/governodigital/pt-br/acessibilidade-digital)
+
+## 📊 Status do Projeto
+
+- ✅ Integração básica com Django Admin
+- ✅ Templates base Gov.BR
+- ✅ Componentes CSS principais
+- ✅ Suporte a formulários Django
+- 🔄 Em desenvolvimento: Widgets customizados
+- 📋 Planejado: Componentes JavaScript interativos
+
+---
+
+**Desenvolvido com ❤️ para o ecossistema Gov.BR**
