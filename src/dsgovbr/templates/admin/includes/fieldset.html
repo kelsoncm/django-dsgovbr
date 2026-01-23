@@ -1,21 +1,30 @@
-<fieldset class="module aligned {{ fieldset.classes }}"{% if fieldset.name %} aria-labelledby="{{ prefix }}-{{ id_prefix}}-{{ id_suffix }}-heading"{% endif %}>
-    {% if fieldset.name %}
+<div class="br-card" id="cardundefined">
+    <div class="card-header">
+        <div class="text-weight-semi-bold text-up-02">{{ fieldset.name }}</div>
+      </div>
+      <div class="card-content">
+
+{% comment %} <fieldset class="module aligned {{ fieldset.classes }}"{% if fieldset.name %} aria-labelledby="{{ prefix }}-{{ id_prefix}}-{{ id_suffix }}-heading"{% endif %}> {% endcomment %}
+
+    {% comment %} {% if fieldset.name %}
         {% if fieldset.is_collapsible %}<details><summary>{% endif %}
         <legend id="{{ prefix }}-{{ id_prefix}}-{{ id_suffix }}-heading" class="fieldset-heading">{{ fieldset.name }}</legend>
         {% if fieldset.is_collapsible %}</summary>{% endif %}
-    {% endif %}
+    {% endif %} {% endcomment %}
     {% if fieldset.description %}
         <div class="description">{{ fieldset.description|safe }}</div>
     {% endif %}
     {% for line in fieldset %}
         <div class="form-row{% if line.fields|length == 1 and line.errors %} errors{% endif %}{% if not line.has_visible_field %} hidden{% endif %}{% for field in line %}{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% endfor %}">
-            {% if line.fields|length == 1 %}{{ line.errors }}{% else %}<div class="flex-container form-multiline">{% endif %}
+            
             {% for field in line %}
                 <div>
-                    {% if not line.fields|length == 1 and not field.is_readonly %}{{ field.errors }}{% endif %}
-                        <div class="flex-container{% if not line.fields|length == 1 %} fieldBox{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}{% endif %}{% if field.is_checkbox %} checkbox-row{% endif %}">
+                        <div class="
+                            {% if field.is_checkbox %}br-checkbox {% else %} br-input br-textarea {% endif %}
+                            {% if line.fields|length == 1 %} danger {% endif %}
+                            {% if not line.fields|length == 1 %} fieldBox{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}{% endif %}{% if field.is_checkbox %} checkbox-row{% endif %}">
                             {% if field.is_checkbox %}
-                                {{ field.field }}{{ field.label_tag }}
+                                {{ field.field }} {{ field.label_tag }}
                             {% else %}
                                 {{ field.label_tag }}
                                 {% if field.is_readonly %}
@@ -24,6 +33,14 @@
                                     {{ field.field }}
                                 {% endif %}
                             {% endif %}
+                            {% if line.fields|length == 1 %}
+                                {{ line.errors }}
+                            {% else %}
+                                <div class="flex-container form-multiline">
+                            {% endif %}
+                            {% if not line.fields|length == 1 and not field.is_readonly %}
+                                {{ field.errors }}
+                            {% endif %}                            
                         </div>
                     {% if field.field.help_text %}
                         <div class="help{% if field.field.is_hidden %} hidden{% endif %}"{% if field.field.id_for_label %} id="{{ field.field.id_for_label }}_helptext"{% endif %}>
@@ -36,4 +53,6 @@
         </div>
     {% endfor %}
     {% if fieldset.name and fieldset.is_collapsible %}</details>{% endif %}
-</fieldset>
+{% comment %} </fieldset> {% endcomment %}
+    </div>
+</div>
