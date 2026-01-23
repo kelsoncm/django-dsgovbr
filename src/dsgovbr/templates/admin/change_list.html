@@ -4,10 +4,6 @@
 {% block title %}{% if cl.formset and cl.formset.errors %}{% translate "Error:" %} {% endif %}{{ block.super }}{% endblock %}
 {% block extrastyle %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static "admin/css/changelists.css" %}">
-  {% if cl.formset %}
-    <link rel="stylesheet" href="{% static "admin/css/forms.css" %}">
-  {% endif %}
   {% if cl.formset or action_form %}
     <script src="{% url 'admin:jsi18n' %}"></script>
   {% endif %}
@@ -39,15 +35,17 @@
 
 {% block coltype %}{% endblock %}
 
-{% block object-tools %}
-<ul class="object-tools">
-  {% block object-tools-items %}
-    {% change_list_object_tools %}
-  {% endblock %}
-</ul>
-{% endblock %}
 
 {% block content %}
+
+  {% block object-tools %}
+  <ul class="object-tools">
+    {% block object-tools-items %}
+      {% change_list_object_tools %}
+    {% endblock %}
+  </ul>
+  {% endblock %}
+
   <div id="content-main">
     {% if cl.formset and cl.formset.errors %}
         <p class="errornote">

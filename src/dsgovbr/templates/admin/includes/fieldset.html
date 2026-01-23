@@ -1,19 +1,26 @@
-<div class="br-card" id="cardundefined">
+{% comment %} <div class="br-card" id="cardundefined">
     <div class="card-header">
         <div class="text-weight-semi-bold text-up-02">{{ fieldset.name }}</div>
       </div>
-      <div class="card-content">
-
-{% comment %} <fieldset class="module aligned {{ fieldset.classes }}"{% if fieldset.name %} aria-labelledby="{{ prefix }}-{{ id_prefix}}-{{ id_suffix }}-heading"{% endif %}> {% endcomment %}
-
-    {% comment %} {% if fieldset.name %}
+      <div class="card-content"> {% endcomment %}
+<style>
+    .fieldset > legend > .description {
+        font-weight: 300;
+    }
+</style>
+<fieldset class="fieldset" >
+{% comment %} class="module aligned {{ fieldset.classes }}"{% if fieldset.name %} aria-labelledby="{{ prefix }}-{{ id_prefix}}-{{ id_suffix }}-heading"{% endif %}> {% endcomment %}
+    {% if fieldset.name %}
         {% if fieldset.is_collapsible %}<details><summary>{% endif %}
-        <legend id="{{ prefix }}-{{ id_prefix}}-{{ id_suffix }}-heading" class="fieldset-heading">{{ fieldset.name }}</legend>
+        <legend>
+            {{ fieldset.name }}
+                {% if fieldset.description %}
+                    <div class="description">{{ fieldset.description|safe }}</div>
+                {% endif %}
+        </legend>
         {% if fieldset.is_collapsible %}</summary>{% endif %}
-    {% endif %} {% endcomment %}
-    {% if fieldset.description %}
-        <div class="description">{{ fieldset.description|safe }}</div>
     {% endif %}
+
     {% for line in fieldset %}
         <div class="form-row{% if line.fields|length == 1 and line.errors %} errors{% endif %}{% if not line.has_visible_field %} hidden{% endif %}{% for field in line %}{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% endfor %}">
             
@@ -43,9 +50,10 @@
                             {% endif %}                            
                         </div>
                     {% if field.field.help_text %}
-                        <div class="help{% if field.field.is_hidden %} hidden{% endif %}"{% if field.field.id_for_label %} id="{{ field.field.id_for_label }}_helptext"{% endif %}>
-                            <div>{{ field.field.help_text|safe }}</div>
-                        </div>
+                        <span class="feedback info {% if field.field.is_hidden %} hidden{% endif %}" {% if field.field.id_for_label %} id="{{ field.field.id_for_label }}_helptext"{% endif %}" role="alert">
+                            <i class="fas fa-info-circle" aria-hidden="true"></i>
+                            {{ field.field.help_text|safe }}
+                        </span>
                     {% endif %}
                 </div>
             {% endfor %}
@@ -53,6 +61,6 @@
         </div>
     {% endfor %}
     {% if fieldset.name and fieldset.is_collapsible %}</details>{% endif %}
-{% comment %} </fieldset> {% endcomment %}
-    </div>
-</div>
+</fieldset>
+    {% comment %} </div>
+</div> {% endcomment %}
