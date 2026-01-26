@@ -1,4 +1,4 @@
-{% load i18n static %}
+{% load i18n static dsgovbr %}
 <!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
@@ -7,7 +7,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>{% block title %}{% endblock %}</title>
+  <title>{% block title %}{% endblock title %}</title>
 
   <!-- Fontes -->
   <link rel="stylesheet" href="https://cdngovbr-ds.estaleiro.serpro.gov.br/design-system/fonts/rawline/css/rawline.css" />
@@ -16,42 +16,16 @@
 
   <!-- Design System de Governo-->
   <link rel="stylesheet" href="{% static 'vendors/serpro/core.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'dsgovbr/css/dsgovbr.css' %}" />
 
-  {% comment %}
-    <link rel="stylesheet" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}">
-  {% endcomment %}
-  {% block dark-mode-vars %}
-    {% comment %}
-      <link rel="stylesheet" href="{% static "admin/css/dark_mode.css" %}">
-      <script src="{% static "admin/js/theme.js" %}"></script>
-    {% endcomment %}
-  {% endblock %}
-  {% if not is_popup and is_nav_sidebar_enabled %}
-    {% comment %}
-      <link rel="stylesheet" href="{% static "admin/css/nav_sidebar.css" %}">
-      <script src="{% static 'admin/js/nav_sidebar.js' %}" defer></script>
-    {% endcomment %}
-  {% endif %}
-  {% block extrastyle %}
-  {% endblock %}
-  {% comment %}
-    {% if LANGUAGE_BIDI %}
-      <link rel="stylesheet" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}">
-    {% endif %}
-  {% endcomment %}
-  {% block extrahead %}
-  {% endblock %}
-  {% block responsive %}
-  {% comment %}
-    <link rel="stylesheet" href="{% static "admin/css/responsive.css" %}">
-    {% if LANGUAGE_BIDI %}
-      <link rel="stylesheet" href="{% static "admin/css/responsive_rtl.css" %}">
-    {% endif %}
-  {% endcomment %}
-  {% endblock %}
-  {% block blockbots %}
-    <meta name="robots" content="NONE,NOARCHIVE">
-  {% endblock %}
+  {% include 'dsgovbr/favicon.html' %}
+
+  {% block dark-mode-vars %}{% endblock dark-mode-vars %}
+  {% if not is_popup and is_nav_sidebar_enabled %}{% endif %}
+  {% block extrastyle %}{% endblock extrastyle %}
+  {% block extrahead %}{% endblock extrahead %}
+  {% block responsive %}{% endblock responsive %}
+  {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE">{% endblock blockbots %}
 </head>
 
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now "Z" %}">
@@ -87,79 +61,82 @@
         <header class="br-header compact" id="header" data-sticky="data-sticky">
           <div class="container-fluid">
             <div class="header-top">
-              <div class="header-logo"><img src="data:image/png;base64,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" alt="logo"><span class="br-divider vertical"></span>
+              <div class="header-logo">
+                <img src="{% static 'vendors/serpro/govbr.svg' %}" alt="logo">
+                <span class="br-divider vertical"></span>
                 <div class="header-sign">IFRN</div>
               </div>
               <div class="header-actions">
                 {% if dsgovbr.fast_access_links %}
-                <div class="header-links dropdown">
-                  <button class="br-button circle small" type="button" data-toggle="dropdown" aria-label="Abrir Acesso Rápido"><i class="fas fa-ellipsis-v" aria-hidden="true"></i>
-                  </button>
-                  <div class="br-list">
-                    <div class="header"><div class="title">Acesso Rápido</div></div>
-                    {% for link in fast_access_links %}
-                      <a class="br-item" href="{{ link.url }}">{{ link.label }}</a>
-                    {% endfor %}
-                  </div>
-                </div><span class="br-divider vertical mx-half mx-sm-1"></span>
+                  <div class="header-links dropdown">
+                    <button class="br-button circle small" type="button" data-toggle="dropdown" aria-label="Abrir Acesso Rápido"><i class="fas fa-ellipsis-v" aria-hidden="true"></i>
+                    </button>
+                    <div class="br-list">
+                      <div class="header"><div class="title">Acesso Rápido</div></div>
+                      {% for link in fast_access_links %}
+                        <a class="br-item" href="{{ link.url }}">{{ link.label }}</a>
+                      {% endfor %}
+                    </div>
+                  </div><span class="br-divider vertical mx-half mx-sm-1"></span>
                 {% endif %}
                 {% if dsgovbr.have_functions_active %}
-                <div class="header-functions dropdown">
-                  <button class="br-button circle small" type="button" data-toggle="dropdown" aria-label="Abrir Funcionalidades do Sistema"><i class="fas fa-th" aria-hidden="true"></i>
-                  </button>
-                  <div class="br-list">
-                    <div class="header">
-                      <div class="title">Funcionalidades do Sistema</div>
-                    </div>
-                    <div class="br-item">
-                      <button class="br-button circle small" type="button" aria-label="Funcionalidade 1"><i class="fas fa-chart-bar" aria-hidden="true"></i><span class="text">Funcionalidade 1</span>
-                      </button>
-                    </div>
-                    <div class="br-item">
-                      <button class="br-button circle small" type="button" aria-label="Funcionalidade 2"><i class="fas fa-headset" aria-hidden="true"></i><span class="text">Funcionalidade 2</span>
-                      </button>
-                    </div>
-                    <div class="br-item">
-                      <button class="br-button circle small" type="button" aria-label="Funcionalidade 3"><i class="fas fa-comment" aria-hidden="true"></i><span class="text">Funcionalidade 3</span>
-                      </button>
-                    </div>
-                    <div class="br-item">
-                      <button class="br-button circle small" type="button" aria-label="Funcionalidade 4"><i class="fas fa-adjust" aria-hidden="true"></i><span class="text">Funcionalidade 4</span>
-                      </button>
+                  <div class="header-functions dropdown">
+                    <button class="br-button circle small" type="button" data-toggle="dropdown" aria-label="Abrir Funcionalidades do Sistema"><i class="fas fa-th" aria-hidden="true"></i>
+                    </button>
+                    <div class="br-list">
+                      <div class="header">
+                        <div class="title">Funcionalidades do Sistema</div>
+                      </div>
+                      <div class="br-item">
+                        <button class="br-button circle small" type="button" aria-label="Funcionalidade 1"><i class="fas fa-chart-bar" aria-hidden="true"></i><span class="text">Funcionalidade 1</span>
+                        </button>
+                      </div>
+                      <div class="br-item">
+                        <button class="br-button circle small" type="button" aria-label="Funcionalidade 2"><i class="fas fa-headset" aria-hidden="true"></i><span class="text">Funcionalidade 2</span>
+                        </button>
+                      </div>
+                      <div class="br-item">
+                        <button class="br-button circle small" type="button" aria-label="Funcionalidade 3"><i class="fas fa-comment" aria-hidden="true"></i><span class="text">Funcionalidade 3</span>
+                        </button>
+                      </div>
+                      <div class="br-item">
+                        <button class="br-button circle small" type="button" aria-label="Funcionalidade 4"><i class="fas fa-adjust" aria-hidden="true"></i><span class="text">Funcionalidade 4</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
                 {% endif %}
                 {% if dsgovbr.have_search_active %}
-                <div class="header-search-trigger">
-                  <button class="br-button circle" type="button" aria-label="Abrir Busca" data-toggle="search" data-target=".header-search"><i class="fas fa-search" aria-hidden="true"></i>
-                  </button>
-                </div>
-                {% endif %}
-                <div class="header-login">
-                  {% if not user.is_authenticated %}
-                  <div class="header-sign-in">
-                    <button class="br-sign-in small" type="button" data-trigger="login"><i class="fas fa-user" aria-hidden="true"></i><span class="d-sm-inline">Entrar</span>
+                  <div class="header-search-trigger">
+                    <button class="br-button circle" type="button" aria-label="Abrir Busca" data-toggle="search" data-target=".header-search"><i class="fas fa-search" aria-hidden="true"></i>
                     </button>
                   </div>
-                  {% else %}
-                  <div class="header-avatar">
-                      <button class="br-sign-in" type="button" id="avatar-dropdown-trigger" data-toggle="dropdown" data-target="avatar-menu" aria-label="Olá, Fulano" data-visible="false" aria-expanded="false" aria-controls="avatar-menu" tabindex="0" style="padding-left: 0;">
-                        <span class="br-avatar" title="Fulano da Silva">
-                          <span class="content bg-orange-vivid-30 text-pure-0">F</span>
-                        </span>
-                        <span class="ml-2 text-gray-80 text-weight-regular">Olá, <span class="text-weight-semi-bold">{{ user.username }}</span></span><i class="fas fa-caret-down" aria-hidden="true"></i>
+                {% endif %}
+                {% if not user.is_authenticated %}
+                  <div class="header-login">
+                    <div class="header-sign-in">
+                      <button class="br-sign-in small" type="button" data-trigger="login"><i class="fas fa-user" aria-hidden="true"></i><span class="d-sm-inline">Entrar</span>
                       </button>
-                      <div class="br-list" id="avatar-menu" hidden="hidden" role="menu" aria-labelledby="avatar-dropdown-trigger">
-                        <a class="br-item" href="javascript:void(0)" role="menuitem">Dados pessoais</a>
-                        <a class="br-item" href="javascript:void(0)" role="menuitem">Privacidade</a>
-                        <a class="br-item" href="javascript:void(0)" role="menuitem">Notificações</a>
-                        <a class="br-item" href="javascript:void(0)" role="menuitem">Perguntas frequentes</a>
-                        <a class="br-item" href="{% url 'admin:logout' %}" role="menuitem">Sair</a>
-                      </div>
+                    </div>
                   </div>
-                  {% endif %}
-                </div>
+                {% else %}
+                  <div class="header-login">
+                    <div class="header-avatar">
+                        <button class="br-sign-in" type="button" id="avatar-dropdown-trigger" data-toggle="dropdown" data-target="avatar-menu" aria-label="Olá, Fulano" data-visible="false" aria-expanded="false" aria-controls="avatar-menu" tabindex="0" style="padding-left: 0;">
+                          <span class="br-avatar" title="Fulano da Silva">
+                            <span class="content bg-orange-vivid-30 text-pure-0">{{ user|user_letters }}</span>
+                          </span>
+                          <span class="ml-2 text-gray-80 text-weight-regular">Olá, <span class="text-weight-semi-bold">{{ user.first_name | first_word }}</span></span><i class="fas fa-caret-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="br-list" id="avatar-menu" hidden="hidden" role="menu" aria-labelledby="avatar-dropdown-trigger">
+                          {% for item in user_menu %}
+                            <a class="br-item" href="{{ item.url }}" role="menuitem">{{ item.label }}</a>
+                          {% endfor %}
+                          <a class="br-item" href="{% url 'admin:logout' %}" role="menuitem">Sair</a>
+                        </div>
+                    </div>
+                  </div>
+                {% endif %}
               </div>
             </div>
             <div class="header-bottom">
@@ -169,8 +146,8 @@
                   </button>
                 </div>
                 <div class="header-info">
-                  <div class="header-title">Integrador AVA</div>
-                  {% if subtitle %}<div class="header-subtitle">Subtítulo do Header</div>{% endif %}
+                  <div class="header-title">{{ project_title }}</div>
+                  {% if project_subtitle %}<div class="header-subtitle">{{ project_subtitle }}</div>{% endif %}
                 </div>
               </div>
               {% if show_searchbox %}
@@ -307,19 +284,18 @@
 
 
     {% if not is_popup %}
-      <footer class="br-footer pt-3" id="footer">
-        <div class="container-fluid">
-          <div class="info">
-            <div class="text-down-01 text-medium pb-3">
-              {% block footer %}
-              © 2025 IFRN — Integrador v{{ app_version }}. Licença MIT. Veja os <strong><a href="https://opensource.org/license/mit" target="_blank">termos da
-                  “Licença”</a></strong>.
-              <!-- app_last_startup:{{ app_last_startup }} -->
-              {% endblock %}
+      {% block footer %}
+        <footer class="br-footer pt-3" id="footer">
+          <div class="container-fluid">
+            <div class="info">
+              <div class="text-down-01 text-medium pb-3">
+               {{ project_copyright }} — v{{ project_version }}. <a href="{{ project_license_url }}" target="_blank">{{ project_license }}.</a></strong>.
+                <!-- app_last_startup:{{ app_last_startup }} -->
+              </div>
             </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      {% endblock %}
       {% if is_cookie_consent_enabled %}
         <div class="br-cookiebar default d-none" tabindex="-1"></div>
       {% endif %}
@@ -328,8 +304,7 @@
   </div>
 
   <script src="{% static 'vendors/serpro/core-init.min.js' %}"></script>
-  {% block extrabody %}
-  {% endblock extrabody %}
+  {% block extrabody %}{% endblock extrabody %}
 </body>
 
 </html>
