@@ -1,7 +1,7 @@
 {% extends "admin/base.html" %}
 
 {% block title %}
-  {% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}
+  {% if project_title %}{{ project_title }} | {% endif %}{{ site_title|default:_('Django site admin') }}
 {% endblock title %}
 
 {% block branding %}

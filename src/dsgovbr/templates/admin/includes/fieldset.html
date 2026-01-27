@@ -3,12 +3,7 @@
         <div class="text-weight-semi-bold text-up-02">{{ fieldset.name }}</div>
       </div>
       <div class="card-content"> {% endcomment %}
-<style>
-    .fieldset > legend > .description {
-        font-weight: 300;
-    }
-</style>
-<fieldset class="fieldset" >
+<fieldset class="fieldset br-card" >
 {% comment %} class="module aligned {{ fieldset.classes }}"{% if fieldset.name %} aria-labelledby="{{ prefix }}-{{ id_prefix}}-{{ id_suffix }}-heading"{% endif %}> {% endcomment %}
     {% if fieldset.name %}
         {% if fieldset.is_collapsible %}<details><summary>{% endif %}
@@ -40,8 +35,11 @@
                                     {{ field.field }}
                                 {% endif %}
                             {% endif %}
-                            {% if line.fields|length == 1 %}
-                                {{ line.errors }}
+                            {% if line.fields|length == 1 and line.errors %}
+                                <span class="feedback danger" role="alert">
+                                    <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                                    {{ field.errors }}
+                                </span>
                             {% else %}
                                 <div class="flex-container form-multiline">
                             {% endif %}
@@ -49,7 +47,7 @@
                                 {{ field.errors }}
                             {% endif %}                            
                         </div>
-                    {% if field.field.help_text %}
+                    {% if field.field.help_text and not field.is_readonly %}
                         <span class="feedback info {% if field.field.is_hidden %} hidden{% endif %}" {% if field.field.id_for_label %} id="{{ field.field.id_for_label }}_helptext"{% endif %}" role="alert">
                             <i class="fas fa-info-circle" aria-hidden="true"></i>
                             {{ field.field.help_text|safe }}

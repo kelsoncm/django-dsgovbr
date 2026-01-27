@@ -1,3 +1,29 @@
 div#container {
     min-height: calc(100vh - 130px);
 }
+
+span.feedback.danger > ul#id_token_error {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+a.br-button.secondary.small.danger {
+    font-size: 90%;
+    padding: 0 1.0em;
+    float: right;
+}
+
+fieldset.fieldset.br-card {
+    padding: 2em;
+}
+
+fieldset.fieldset.br-card > legend {
+    top: 5em;
+    position: relative;
+    min-height: 7em;
+}
+
+fieldset.fieldset.br-card > legend > .description {
+    font-weight: 300;
+}
