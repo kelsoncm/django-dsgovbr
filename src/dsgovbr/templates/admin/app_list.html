@@ -1,12 +1,15 @@
 {% load i18n %}
 
-<div class="menu-folder drop-menu">
+<div class="menu-folder">
   <a class="menu-item" href="/" role="treeitem">
     <span class="icon"><i class="fas fa-home"></i></span>
     <span class="content">Início</span>
     <span class="support"></span>
   </a>
-  {% for app in app_list %}
+</div>
+
+{% for app in app_list %}
+  <div class="menu-folder">
     <a class="menu-item" href="javascript:void(0)" role="treeitem">
       <span class="icon"><i class="fas fa-user {{ app.icon }}"></i></span>
       <span class="content">{{ app.name }}</span>
@@ -40,7 +43,6 @@
         <li>{% translate 'No models available.' %}</li>
       {% endfor %}
     </ul>
-  {% endfor %}
-
-</div>
+  </div>
+{% endfor %}
 
