@@ -1,6 +1,6 @@
 # Histórico de Versões
 
-## 5.2.2
+## 5.2.3
 
 ### Melhorias na Interface Administrativa
 
