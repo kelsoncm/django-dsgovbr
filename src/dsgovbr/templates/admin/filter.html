@@ -1,0 +1,11 @@
+{% load i18n %}
+<div class="col-3">
+    <div class="form-group">
+        <label for="exampleInputEmail1">{% blocktranslate with filter_title=title %}{{ filter_title }}{% endblocktranslate %}:</label>
+        <select class="form-control select2">
+            {% for choice in choices %}
+                <option class="nav-item">{{ choice.display }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>

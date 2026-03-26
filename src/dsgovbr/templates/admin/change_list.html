@@ -26,13 +26,12 @@
 {% block coltype %}{% endblock %}
 
 {% block content %}
-  {% block object-tools %}
-  <ul class="object-tools">
-    {% block object-tools-items %}
-      {% change_list_object_tools %}
-    {% endblock %}
-  </ul>
-  {% endblock %}
+        <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+            <div class="changelist-form-container">
+                {% block date_hierarchy %}{% if cl.date_hierarchy %}{% date_hierarchy cl %}{% endif %}{% endblock %}
+            </div>
+        </div>
+
 
   <div id="content-main">
     {% if cl.formset and cl.formset.errors %}
@@ -43,39 +42,180 @@
     {% endif %}
     <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
       <div class="changelist-form-container">
-        {% block search %}{% search_form cl %}{% endblock %}
-        {% block date_hierarchy %}{% if cl.date_hierarchy %}{% date_hierarchy cl %}{% endif %}{% endblock %}
 
         <form id="changelist-form" method="post"{% if cl.formset and cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
-        {% if cl.formset %}
-          <div>{{ cl.formset.management_form }}</div>
-        {% endif %}
+
 
         {% block result_list %}
           {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}
-          {% result_list cl %}
-          {% if action_form and actions_on_bottom and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+          <div class="br-table" data-search="data-search" data-selection="data-selection" data-collapse="data-collapse" data-random="data-random">
+            <div class="table-header">
+              <div class="top-bar">
+                <div class="table-title">Listagem de {{ cl.opts.verbose_name_plural }}</div>
+                {% if cl.search_fields %}
+                  <div class="search-trigger">
+                    <button class="br-button circle" type="button" id="button-input-search" data-toggle="search" aria-label="Abrir busca" aria-controls="table-searchbox-44728">
+                      <i class="fas fa-search" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                {% endif %}
+                {% if cl.has_filters %}
+                <div class="filter-trigger">
+                  <button class="br-button circle" type="button" id="button-input-filter" data-toggle="filter" aria-label="Abrir filtros" aria-controls="table-filterbox-44728">
+                    <i class="fas fa-filter" aria-hidden="true"></i>
+                  </button>
+                </div>
+                {% endif %}
+                <div class="actions-trigger text-nowrap">
+                  <button class="br-button circle" type="button" id="button-dropdown-density" title="Ver mais opções" data-toggle="dropdown" data-target="target01-44728" aria-label="Definir densidade da tabela" aria-haspopup="true" aria-live="polite">
+                    <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
+                  </button>
+                  <div class="br-list" id="target01-44728" role="menu" aria-labelledby="button-dropdown-density" hidden="hidden" style="z-index: 100;">
+                    {% block object-tools %}
+                      {% block object-tools-items %}
+                        {% change_list_object_tools %}
+                      {% endblock object-tools-items %}
+                    {% endblock object-tools %}                    
+                    <span class="br-divider"></span>
+                    <div style="padding: 10px">
+                      <center style="padding: 0 0 10px 0;">Densidade</center>
+                      <div>
+                        <button class="br-button small" type="button" data-density="small" role="menuitem">Alta</button>
+                        <button class="br-button small" type="button" data-density="medium" role="menuitem">Média</button>
+                        <button class="br-button small" type="button" data-density="large" role="menuitem">Baixa</button>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              {% block search %}
+                {% search_form cl %}
+              {% endblock %}
+              <div class="filter-bar" style="display: none;">
+                {% block filters %}
+                    {% if cl.has_filters %}
+                        <nav id="changelist-filter" aria-labelledby="changelist-filter-header">
+                            <h2 id="changelist-filter-header">{% translate 'Filter' %}</h2>
+                            {% if cl.is_facets_optional or cl.has_active_filters %}
+                                <div id="changelist-filter-extra-actions">
+                                    {% if cl.is_facets_optional %}<h3>
+                                        {% if cl.add_facets %}<a href="{{ cl.remove_facet_link }}"
+                                                                class="hidelink">{% translate "Hide counts" %}</a>
+                                        {% else %}<a href="{{ cl.add_facet_link }}"
+                                                    class="viewlink">{% translate "Show counts" %}</a>{% endif %}
+                                    </h3>{% endif %}
+                                    {% if cl.has_active_filters %}<h3>
+                                        <a href="{{ cl.clear_all_filters_qs }}">&#10006; {% translate "Clear all filters" %}</a>
+                                    </h3>{% endif %}
+                                </div>{% endif %}
+                            {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+                        </nav>
+                    {% endif %}
+                {% endblock %}
+              </div>
+              <div class="selected-bar">
+                <div class="info"><span class="count">0</span><span class="text">item selecionado</span></div>
+                <div class="actions-trigger text-nowrap">
+                  <button class="br-button circle inverted" type="button" id="button-dropdown-selection" data-toggle="dropdown" data-target="target02-44728" aria-controls="target02-44728" aria-label="Ver mais opções de ação" aria-haspopup="true">
+                    <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
+                  </button>
+                  <div class="br-list" id="target02-44728" role="menu" aria-labelledby="button-dropdown-selection" hidden="hidden">
+                    <button class="br-item" type="button" data-toggle="" role="menuitem">Ação 1
+                    </button><span class="br-divider"></span>
+                    <button class="br-item" type="button" role="menuitem">Ação 2
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {% result_list cl %}
+            {% if action_form and actions_on_bottom and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+
+            <div class="table-footer">
+              <nav class="br-pagination" aria-label="paginação" data-total="50" data-current="1" data-per-page="20">
+                <div class="pagination-per-page">
+                  <div class="br-select">
+                    <div class="br-input">
+                      <label for="per-page-selection-random-64610">Exibir</label>
+                      <input id="per-page-selection-random-64610" type="text" placeholder=" "/>
+                      <button class="br-button" type="button" aria-label="Exibir lista" tabindex="-1" data-trigger="data-trigger"><i class="fas fa-angle-down" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <div class="br-list" tabindex="0">
+                      <div class="br-item" tabindex="-1">
+                        <div class="br-radio">
+                          <input id="per-page-10-random-64610" type="radio" name="per-page-random-64610" value="per-page-10-random-64610" checked="checked"/>
+                          <label for="per-page-10-random-64610">10</label>
+                        </div>
+                      </div>
+                      <div class="br-item" tabindex="-1">
+                        <div class="br-radio">
+                          <input id="per-page-20-random-64610" type="radio" name="per-page-random-64610" value="per-page-20-random-64610"/>
+                          <label for="per-page-20-random-64610">20</label>
+                        </div>
+                      </div>
+                      <div class="br-item" tabindex="-1">
+                        <div class="br-radio">
+                          <input id="per-page-30-random-64610" type="radio" name="per-page-random-64610" value="per-page-30-random-64610"/>
+                          <label for="per-page-30-random-64610">30</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div><span class="br-divider d-none d-sm-block mx-3"></span>
+                <div class="pagination-information d-none d-sm-flex"><span class="current">1</span>&ndash;<span class="per-page">20</span>&nbsp;de&nbsp;<span class="total">50</span>&nbsp;itens</div>
+                <div class="pagination-go-to-page d-none d-sm-flex ml-auto">
+                  <form id="changelist-form" method="post"{% if cl.formset and cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>
+                    {% csrf_token %}
+                    {% if cl.formset %}
+                        <div>{{ cl.formset.management_form }}</div>
+                    {% endif %}
+                    {% block pagination %}{% pagination cl %}{% endblock %}
+                  </form>
+
+                  <div class="br-select">
+                    <div class="br-input">
+                      <label for="go-to-selection-random-43734">Página</label>
+                      <input id="go-to-selection-random-43734" type="text" placeholder=" "/>
+                      <button class="br-button" type="button" aria-label="Exibir lista" tabindex="-1" data-trigger="data-trigger"><i class="fas fa-angle-down" aria-hidden="true"></i></button>
+                    </div>
+                    <div class="br-list" tabindex="0">
+                      <div class="br-item" tabindex="-1">
+                        <div class="br-radio">
+                          <input id="go-to-1-random-43734" type="radio" name="go-to-random-43734" value="go-to-1-random-43734" checked="checked"/>
+                          <label for="go-to-1-random-43734">1</label>
+                        </div>
+                      </div>
+                      <div class="br-item" tabindex="-1">
+                        <div class="br-radio">
+                          <input id="go-to-2-random-43734" type="radio" name="go-to-random-43734" value="go-to-2-random-43734"/>
+                          <label for="go-to-2-random-43734">2</label>
+                        </div>
+                      </div>
+                      <div class="br-item" tabindex="-1">
+                        <div class="br-radio">
+                          <input id="go-to-3-random-43734" type="radio" name="go-to-random-43734" value="go-to-3-random-43734"/>
+                          <label for="go-to-3-random-43734">3</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div><span class="br-divider d-none d-sm-block mx-3"></span>
+                <div class="pagination-arrows ml-auto ml-sm-0">
+                  <button class="br-button circle" type="button" aria-label="Voltar página"><i class="fas fa-angle-left" aria-hidden="true"></i>
+                  </button>
+                  <button class="br-button circle" type="button" aria-label="Página seguinte"><i class="fas fa-angle-right" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </nav>
+            </div>
+          </div> 
         {% endblock %}
-        {% block pagination %}{% pagination cl %}{% endblock %}
         </form>
+        
       </div>
-      {% block filters %}
-        {% if cl.has_filters %}
-          <nav id="changelist-filter" aria-labelledby="changelist-filter-header">
-            <h2 id="changelist-filter-header">{% translate 'Filter' %}</h2>
-            {% if cl.is_facets_optional or cl.has_active_filters %}<div id="changelist-filter-extra-actions">
-              {% if cl.is_facets_optional %}<h3>
-                {% if cl.add_facets %}<a href="{{ cl.remove_facet_link }}" class="hidelink">{% translate "Hide counts" %}</a>
-                {% else %}<a href="{{ cl.add_facet_link }}" class="viewlink">{% translate "Show counts" %}</a>{% endif %}
-              </h3>{% endif %}
-              {% if cl.has_active_filters %}<h3>
-                <a href="{{ cl.clear_all_filters_qs }}">&#10006; {% translate "Clear all filters" %}</a>
-              </h3>{% endif %}
-            </div>{% endif %}
-            {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
-          </nav>
-        {% endif %}
-      {% endblock %}
     </div>
   </div>
 {% endblock %}

@@ -27,3 +27,21 @@ fieldset.fieldset.br-card > legend {
 fieldset.fieldset.br-card > legend > .description {
     font-weight: 300;
 }
+
+
+th.action-checkbox-column, td.action-checkbox {
+    width: 24px;
+    padding: 16px 16px;
+}
+
+#result_list tbody th {
+    background: transparent;
+}
+
+#result_list tbody th:hover {
+    background: linear-gradient(rgba(var(--color-rgb),var(--hover)),rgba(var(--color-rgb),var(--hover)));
+}
+
+a.br-item {
+    text-decoration: none;
+}
