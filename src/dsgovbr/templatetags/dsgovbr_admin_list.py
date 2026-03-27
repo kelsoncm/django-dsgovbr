@@ -542,3 +542,17 @@ def result_list_tag(parser, token):
 #         func=lambda context: context,
 #         template_name="change_list_object_tools.html",
 #     )
+
+
+
+@register.simple_tag
+def dsgovbr_admin_list_filter(cl, spec):
+    print("admin_list_filter", spec, spec.template)
+    tpl = get_template(spec.template)
+    return tpl.render(
+        {
+            "title": spec.title,
+            "choices": list(spec.choices(cl)),
+            "spec": spec,
+        }
+    )

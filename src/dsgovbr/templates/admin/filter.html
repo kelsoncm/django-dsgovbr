@@ -1,11 +1,13 @@
 {% load i18n %}
-<div class="col-3">
-    <div class="form-group">
-        <label for="exampleInputEmail1">{% blocktranslate with filter_title=title %}{{ filter_title }}{% endblocktranslate %}:</label>
-        <select class="form-control select2">
-            {% for choice in choices %}
-                <option class="nav-item">{{ choice.display }}</option>
-            {% endfor %}
-        </select>
+
+<div class="dropdown">
+    <button class="br-button secondary" type="button" id="filter-dropdown-btn" data-toggle="dropdown" data-target="filter-dropdown-list" aria-haspopup="true" aria-expanded="false">
+        {{ title|capfirst }}
+        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+    </button>
+    <div class="br-list" id="filter-dropdown-list" role="menu" aria-labelledby="filter-dropdown-btn" hidden="hidden">
+        {% for choice in choices %}
+            <button class="br-item" type="button" data-value="{{ choice.value }}" role="menuitem">{{ choice.display }}</button>
+        {% endfor %}
     </div>
 </div>

@@ -1,29 +1,28 @@
-{% load i18n admin_urls static admin_list %}
+{% load i18n admin_urls static admin_list dsgovbr_admin_list %}
+
 <!-- .table-header -->
 <div class="table-header">
 
     <!-- .top-bar -->
-    <div class="top-bar">
+    <div class="top-bar" style="padding: var(--spacing-scale-base) 0;">
 
         <!-- .table-title -->
         <div class="table-title">
-            Listagem de {{ cl.opts.verbose_name_plural }}
+            <!-- .addlink -->
+                <a href="{% url opts|admin_urlname:'add' %}" class="addlink br-button small primary">
+                    <i class="fas fa-plus"></i> {% translate 'New' %}
+                </a>
+            <!-- /.addlink -->
         </div>
         <!-- /.table-title -->
 
 
-        <!-- .addlink -->
-            <a href="{% url opts|admin_urlname:'add' %}" class="addlink br-button small primary">
-                <i class="fas fa-plus"></i> {% translate 'New' %}
-            </a>
-            <span class="br-divider vertical mx-3"></span>
-        <!-- /.addlink -->
 
 
         <!-- .search-trigger -->
             {% if cl.search_fields %}
                 <div class="search-trigger">
-                    <button class="br-button circle" type="button" id="button-input-search" data-toggle="search" aria-label="Abrir busca" aria-controls="table-searchbox-44728">
+                    <button class="br-button circle" type="button" id="button-input-search" data-toggle="search" aria-label="Abrir busca">
                         <i class="fas fa-search" aria-hidden="true"></i>
                     </button>
                 </div>
@@ -33,32 +32,50 @@
         <!-- .filter-trigger -->
             {% if cl.has_filters %}
                 <div class="filter-trigger">
-                    <button class="br-button circle" type="button" id="button-input-filter" data-toggle="filter" aria-label="Abrir filtros" aria-controls="table-filterbox-44728">
+                    <button class="br-button circle" type="button" id="button-input-filter" data-toggle="filter" aria-label="Abrir filtros">
                         <i class="fas fa-filter" aria-hidden="true"></i>
                     </button>
                 </div>
-            {% endif %}
+            {% endif %}        
         <!-- /.filter-trigger -->
 
         <!-- .actions-trigger -->
             <div class="actions-trigger text-nowrap">
-                <button class="br-button circle" type="button" id="button-dropdown-actions" title="Ver mais opções" data-toggle="dropdown" data-target="target01-44728" aria-label="Definir densidade da tabela" aria-haspopup="true" aria-live="polite">
+                <button class="br-button circle" type="button" id="button-dropdown-actions" title="Ver mais opções" data-toggle="dropdown" data-target="actions-target" aria-label="Ver mais opções">
                     <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
                 </button>
-                <div class="br-list" id="target01-44728" role="menu" aria-labelledby="button-dropdown-actions" hidden="hidden" style="z-index: 100;">
+                <div class="br-list" id="actions-target" role="menu" aria-labelledby="button-dropdown-actions" hidden="hidden" style="z-index: 100;">
                     {% block object-tools %}
-                    {% block object-tools-items %}
-                        {% change_list_object_tools %}
-                    {% endblock object-tools-items %}
+                        {% block object-tools-items %}
+                            {% change_list_object_tools %}
+                        {% endblock object-tools-items %}
                     {% endblock object-tools %}                    
                     <span class="br-divider"></span>
                     <div style="padding: 10px">
                         <center style="padding: 0 0 10px 0;">Densidade</center>
-                        <div>
-                            <button class="br-button small" type="button" data-density="small" role="menuitem">Alta</button>
-                            <button class="br-button small" type="button" data-density="medium" role="menuitem">Média</button>
-                            <button class="br-button small" type="button" data-density="large" role="menuitem">Baixa</button>
+                        <div class="br-toggle" role="group" aria-label="Densidade da tabela" id="density-toggle-group">
+                            <button class="br-button small" type="button" data-density="small" role="menuitem" aria-pressed="false">Alta</button>
+                            <button class="br-button small active" type="button" data-density="medium" role="menuitem" aria-pressed="true">Média</button>
+                            <button class="br-button small" type="button" data-density="large" role="menuitem" aria-pressed="false">Baixa</button>
                         </div>
+                        <script>
+                        (function() {
+                            var group = document.getElementById('density-toggle-group');
+                            if (group) {
+                                group.addEventListener('click', function(e) {
+                                    if (e.target && e.target.matches('button[data-density]')) {
+                                        var buttons = group.querySelectorAll('button[data-density]');
+                                        buttons.forEach(function(btn) {
+                                            btn.classList.remove('active');
+                                            btn.setAttribute('aria-pressed', 'false');
+                                        });
+                                        e.target.classList.add('active');
+                                        e.target.setAttribute('aria-pressed', 'true');
+                                    }
+                                });
+                            }
+                        })();
+                        </script>
                     </div>
                 </div>
             </div>
@@ -67,44 +84,76 @@
     <!-- /.top-bar -->
 
     <!-- .search_form -->
-    {% block search %}
-        {% search_form cl %}
-    {% endblock %}
+    {% if cl.search_fields %}
+        {% block search %}
+            <div class="search-bar">
+                <div class="br-input">
+                    <form id="changelist-search" method="get" role="search">
+                        <input type="search"  name="{{ search_var }}" value="{{ cl.query }}" 
+                            placeholder="Buscar nesta listagem" aria-labelledby="button-input-search" aria-label="Buscar nesta listagem" autocomplete="off"
+                            {% if cl.search_help_text %} aria-describedby="searchbar_helptext"{% endif %} />
+                        <button class="br-button" type="button" aria-label="Buscar">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                </div>
+                <button class="br-button circle" type="button" data-dismiss="search" aria-label="{% translate 'Search' %}">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+        {% endblock %}
+    {% endif %}        
     <!-- /.search_form -->
 
-    <!-- .filter-bar -->
     {% if cl.has_filters %}
-        <div class="filter-bar" style="display: none;">
-            {% block filters %}
-                <nav id="changelist-filter" aria-labelledby="changelist-filter-header">
-                    <h2 id="changelist-filter-header">{% translate 'Filter' %}</h2>
-                    {% if cl.is_facets_optional or cl.has_active_filters %}
-                        <div id="changelist-filter-extra-actions">
-                            {% if cl.is_facets_optional %}
-                                <h3>
-                                    {% if cl.add_facets %}
-                                        <a href="{{ cl.remove_facet_link }}" class="hidelink">{% translate "Hide counts" %}</a>
-                                    {% else %}
-                                        <a href="{{ cl.add_facet_link }}" class="viewlink">{% translate "Show counts" %}</a>
-                                    {% endif %}
-                                </h3>
-                            {% endif %}
-                            {% if cl.has_active_filters %}
-                                <h3>
-                                    <a href="{{ cl.clear_all_filters_qs }}">&#10006; {% translate "Clear all filters" %}</a>
-                                </h3>
-                            {% endif %}
+        {% block filters %}
+            <div class="filter-bar" id="filter-bar" hidden="hidden" style="background: #fff; padding: 4px; z-index: 110; position: relative; margin-top: -50px;">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%;">
+                        <div>
+                            <nav id="changelist-filter" aria-labelledby="changelist-filter-header" style="display: flex; flex-wrap: wrap;">
+                                {% for spec in cl.filter_specs %}
+                                    {% dsgovbr_admin_list_filter cl spec %}
+                                {% endfor %}
+                                {% if cl.is_facets_optional or cl.has_active_filters %}
+                                    <div id="changelist-filter-extra-actions">
+                                        {% if cl.has_active_filters %}
+                                            <h3>
+                                                <a href="{{ cl.clear_all_filters_qs }}">&#10006; {% translate "Clear all filters" %}</a>
+                                            </h3>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </nav>
                         </div>
-                    {% endif %}
-
-                    {% for spec in cl.filter_specs %}
-                        {% admin_list_filter cl spec %}
-                    {% endfor %}
-                </nav>
-            {% endblock %}
-        </div>
+                        <button class="br-button circle" type="button" data-dismiss="filter" aria-label="Fechar filtros" style="margin-left: 8px; margin-top: 0;">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                        </button>
+                    </div>
+            </div>
+            <script>
+            (function() {
+                var filterBtn = document.getElementById('button-input-filter');
+                var filterBar = document.getElementById('filter-bar');
+                var filterDismissBtn = filterBar ? filterBar.querySelector('[data-dismiss="filter"]') : null;
+                if (filterBtn && filterBar) {
+                    filterBtn.addEventListener('click', function() {
+                        filterBar.hidden = false;
+                        filterBar.classList.add('active');
+                        // Optional: close search-bar if open
+                        var searchBar = document.querySelector('.search-bar');
+                        if (searchBar) searchBar.hidden = true;
+                    });
+                }
+                if (filterDismissBtn && filterBar) {
+                    filterDismissBtn.addEventListener('click', function() {
+                        filterBar.hidden = true;
+                        filterBar.classList.remove('active');
+                    });
+                }
+            })();
+            </script>
+        {% endblock %}
     {% endif %}
-    <!-- /.filter-bar -->
 
     <!-- .selected-bar -->
     <div class="selected-bar">
@@ -116,9 +165,15 @@
                 <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
             </button>
             <div class="br-list" id="target02-44728" role="menu" aria-labelledby="button-dropdown-selection" hidden="hidden">
-                <button class="br-item" type="button" data-toggle="" role="menuitem">Ação 1</button>
-                <span class="br-divider"></span>
-                <button class="br-item" type="button" role="menuitem">Ação 2</button>
+                {% for action in action_form %}
+                    {% if action.field.choices %}
+                        {% for choice in action.field.choices %}
+                            {% if choice.0 %}
+                                <button class="br-item" type="button" data-toggle="" role="menuitem">{{ choice.1 }}</button>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>
