@@ -109,50 +109,56 @@
         {% block filters %}
             <div class="filter-bar" id="filter-bar" hidden="hidden" style="background: #fff; padding: 4px; z-index: 110; position: relative; margin-top: -50px;">
                 <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%;">
-                        <div>
-                            <nav id="changelist-filter" aria-labelledby="changelist-filter-header" style="display: flex; flex-wrap: wrap;">
-                                {% for spec in cl.filter_specs %}
-                                    {% dsgovbr_admin_list_filter cl spec %}
-                                {% endfor %}
-                                {% if cl.is_facets_optional or cl.has_active_filters %}
-                                    <div id="changelist-filter-extra-actions">
-                                        {% if cl.has_active_filters %}
-                                            <h3>
-                                                <a href="{{ cl.clear_all_filters_qs }}">&#10006; {% translate "Clear all filters" %}</a>
-                                            </h3>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
-                            </nav>
-                        </div>
-                        <button class="br-button circle" type="button" data-dismiss="filter" aria-label="Fechar filtros" style="margin-left: 8px; margin-top: 0;">
+                    <div style="flex: 1;">
+                        <nav id="changelist-filter" aria-labelledby="changelist-filter-header" style="display: flex; flex-wrap: wrap;">
+                            {% for spec in cl.filter_specs %}
+                                <div class="dropdown">
+                                    {% with field_name=spec.field.name|default:forloop.counter %}
+                                        {% with btn_id="filter-dropdown-btn-"|add:field_name list_id="filter-dropdown-list-"|add:field_name %}
+                                            <button class="br-button secondary small" type="button" id="{{ btn_id }}" data-toggle="dropdown" data-target="{{ list_id }}" aria-haspopup="true" aria-expanded="false" data-field-name="{{ spec.field.name }}" data-field-title="{{ spec.title|capfirst }}">
+                                                {{ spec.title|capfirst }}
+                                                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                                            </button>
+                                            <div class="br-list" id="{{ list_id }}" role="menu" aria-labelledby="{{ btn_id }}" hidden="hidden">
+                                                {% for choice in spec|choices:cl %}
+                                                    <button class="br-item filter_choice" type="button" data-value="{{ choice.value }}" data-display="{{ choice.display }}" data-field-name="{{ spec.field.name }}" data-field-title="{{ spec.title|capfirst }}" role="menuitem">{{ choice.display }}</button>
+                                                {% endfor %}
+                                            </div>
+                                        {% endwith %}
+                                    {% endwith %}
+                                </div>                                
+                            {% endfor %}
+                            {% if cl.is_facets_optional or cl.has_active_filters %}
+                                <div id="changelist-filter-extra-actions">
+                                    {% if cl.has_active_filters %}
+                                        <h3>
+                                            <a href="{{ cl.clear_all_filters_qs }}">&#10006; {% translate "Clear all filters" %}</a>
+                                        </h3>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </nav>
+                        <!-- Área para tags DSGovBR -->
+                        <div id="dsgovbr-filter-tags" style="margin: 12px 0; display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                        <!-- Inputs hidden para filtros selecionados -->
+                        <form id="dsgovbr-filter-form" method="get" style="display: none;"></form>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
+                        <button class="br-button primary small" type="button" id="dsgovbr-filter-apply" style="margin-bottom: 8px;">Filtrar</button>
+                        <button class="br-button circle small" type="button" data-dismiss="filter" aria-label="Fechar filtros">
                             <i class="fas fa-times" aria-hidden="true"></i>
                         </button>
                     </div>
+                </div>
+
             </div>
-            <script>
-            (function() {
-                var filterBtn = document.getElementById('button-input-filter');
-                var filterBar = document.getElementById('filter-bar');
-                var filterDismissBtn = filterBar ? filterBar.querySelector('[data-dismiss="filter"]') : null;
-                if (filterBtn && filterBar) {
-                    filterBtn.addEventListener('click', function() {
-                        filterBar.hidden = false;
-                        filterBar.classList.add('active');
-                        // Optional: close search-bar if open
-                        var searchBar = document.querySelector('.search-bar');
-                        if (searchBar) searchBar.hidden = true;
-                    });
-                }
-                if (filterDismissBtn && filterBar) {
-                    filterDismissBtn.addEventListener('click', function() {
-                        filterBar.hidden = true;
-                        filterBar.classList.remove('active');
-                    });
-                }
-            })();
-            </script>
-        {% endblock %}
+            <form id="changelist-form" method="post" action="" style="display: none;">
+                <button type="submit" style="display: none;" name="index">Submit</button>
+                <span class="action-counter"></span>
+                <div class="actions"></div>
+            </form>
+             
+        {% endblock filters %}
     {% endif %}
 
     <!-- .selected-bar -->

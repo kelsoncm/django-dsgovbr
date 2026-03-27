@@ -32,7 +32,17 @@ from django.utils.translation import gettext as _
 from django.contrib.admin.templatetags.base import InclusionAdminNode
 
 
+
 register = Library()
+
+# Filter para permitir spec|choices:cl no template
+@register.filter
+def choices(spec, cl):
+    """
+    Permite chamar spec.choices(cl) no template via filter.
+    Uso: {% for choice in spec|choices:cl %}
+    """
+    return spec.choices(cl)
 
 # @register.simple_tag
 # def paginator_number(cl, i):
@@ -547,7 +557,6 @@ def result_list_tag(parser, token):
 
 @register.simple_tag
 def dsgovbr_admin_list_filter(cl, spec):
-    print("admin_list_filter", spec, spec.template)
     tpl = get_template(spec.template)
     return tpl.render(
         {
