@@ -132,6 +132,8 @@
                           {% for item in user_menu %}
                             <a class="br-item" href="{{ item.url }}" role="menuitem">{{ item.label }}</a>
                           {% endfor %}
+                          <a class="br-item" href="https://ava.ifrn.edu.br/" role="menuitem">Painel AVA</a>
+                          <a class="br-item" href="https://suap.ifrn.edu.br/comum/minha_conta/" role="menuitem">Minha conta no SUAP</a>
                           <a class="br-item" href="{% url 'admin:logout' %}" role="menuitem">Sair</a>
                         </div>
                     </div>

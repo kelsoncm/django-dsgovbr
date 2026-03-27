@@ -1,0 +1,128 @@
+{% load i18n admin_urls static admin_list %}
+<!-- .table-header -->
+<div class="table-header">
+
+    <!-- .top-bar -->
+    <div class="top-bar">
+
+        <!-- .table-title -->
+        <div class="table-title">
+            Listagem de {{ cl.opts.verbose_name_plural }}
+        </div>
+        <!-- /.table-title -->
+
+
+        <!-- .addlink -->
+            <a href="{% url opts|admin_urlname:'add' %}" class="addlink br-button small primary">
+                <i class="fas fa-plus"></i> {% translate 'New' %}
+            </a>
+            <span class="br-divider vertical mx-3"></span>
+        <!-- /.addlink -->
+
+
+        <!-- .search-trigger -->
+            {% if cl.search_fields %}
+                <div class="search-trigger">
+                    <button class="br-button circle" type="button" id="button-input-search" data-toggle="search" aria-label="Abrir busca" aria-controls="table-searchbox-44728">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                    </button>
+                </div>
+            {% endif %}
+        <!-- /.search-trigger -->
+
+        <!-- .filter-trigger -->
+            {% if cl.has_filters %}
+                <div class="filter-trigger">
+                    <button class="br-button circle" type="button" id="button-input-filter" data-toggle="filter" aria-label="Abrir filtros" aria-controls="table-filterbox-44728">
+                        <i class="fas fa-filter" aria-hidden="true"></i>
+                    </button>
+                </div>
+            {% endif %}
+        <!-- /.filter-trigger -->
+
+        <!-- .actions-trigger -->
+            <div class="actions-trigger text-nowrap">
+                <button class="br-button circle" type="button" id="button-dropdown-actions" title="Ver mais opções" data-toggle="dropdown" data-target="target01-44728" aria-label="Definir densidade da tabela" aria-haspopup="true" aria-live="polite">
+                    <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
+                </button>
+                <div class="br-list" id="target01-44728" role="menu" aria-labelledby="button-dropdown-actions" hidden="hidden" style="z-index: 100;">
+                    {% block object-tools %}
+                    {% block object-tools-items %}
+                        {% change_list_object_tools %}
+                    {% endblock object-tools-items %}
+                    {% endblock object-tools %}                    
+                    <span class="br-divider"></span>
+                    <div style="padding: 10px">
+                        <center style="padding: 0 0 10px 0;">Densidade</center>
+                        <div>
+                            <button class="br-button small" type="button" data-density="small" role="menuitem">Alta</button>
+                            <button class="br-button small" type="button" data-density="medium" role="menuitem">Média</button>
+                            <button class="br-button small" type="button" data-density="large" role="menuitem">Baixa</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- /.actions-trigger -->
+    </div>
+    <!-- /.top-bar -->
+
+    <!-- .search_form -->
+    {% block search %}
+        {% search_form cl %}
+    {% endblock %}
+    <!-- /.search_form -->
+
+    <!-- .filter-bar -->
+    {% if cl.has_filters %}
+        <div class="filter-bar" style="display: none;">
+            {% block filters %}
+                <nav id="changelist-filter" aria-labelledby="changelist-filter-header">
+                    <h2 id="changelist-filter-header">{% translate 'Filter' %}</h2>
+                    {% if cl.is_facets_optional or cl.has_active_filters %}
+                        <div id="changelist-filter-extra-actions">
+                            {% if cl.is_facets_optional %}
+                                <h3>
+                                    {% if cl.add_facets %}
+                                        <a href="{{ cl.remove_facet_link }}" class="hidelink">{% translate "Hide counts" %}</a>
+                                    {% else %}
+                                        <a href="{{ cl.add_facet_link }}" class="viewlink">{% translate "Show counts" %}</a>
+                                    {% endif %}
+                                </h3>
+                            {% endif %}
+                            {% if cl.has_active_filters %}
+                                <h3>
+                                    <a href="{{ cl.clear_all_filters_qs }}">&#10006; {% translate "Clear all filters" %}</a>
+                                </h3>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% for spec in cl.filter_specs %}
+                        {% admin_list_filter cl spec %}
+                    {% endfor %}
+                </nav>
+            {% endblock %}
+        </div>
+    {% endif %}
+    <!-- /.filter-bar -->
+
+    <!-- .selected-bar -->
+    <div class="selected-bar">
+        <div class="info">
+            <span class="count">0</span><span class="text">item selecionado</span>
+        </div>
+        <div class="actions-trigger text-nowrap">
+            <button class="br-button circle inverted" type="button" id="button-dropdown-selection" data-toggle="dropdown" data-target="target02-44728" aria-controls="target02-44728" aria-label="Ver mais opções de ação" aria-haspopup="true">
+                <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
+            </button>
+            <div class="br-list" id="target02-44728" role="menu" aria-labelledby="button-dropdown-selection" hidden="hidden">
+                <button class="br-item" type="button" data-toggle="" role="menuitem">Ação 1</button>
+                <span class="br-divider"></span>
+                <button class="br-item" type="button" role="menuitem">Ação 2</button>
+            </div>
+        </div>
+    </div>
+    <!-- /.selected-bar -->
+
+</div>
+<!-- /.table-header -->

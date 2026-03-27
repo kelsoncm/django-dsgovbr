@@ -12,7 +12,8 @@ def first_word(value):
 
 @register.filter
 def user_letters(user):
-    return user.first_name[:1].upper() + user.last_name[:1].upper()
+    # return user.first_name[:1].upper() + user.last_name[:1].upper()
+    return user.first_name[:1].upper()
 
 
 @register.simple_tag
