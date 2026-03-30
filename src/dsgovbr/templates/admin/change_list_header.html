@@ -107,64 +107,71 @@
 
     {% if cl.has_filters %}
         {% block filters %}
-            <div class="filter-bar" id="filter-bar" hidden="hidden" style="background: #fff; padding: 4px; z-index: 110; position: relative; margin-top: -50px;">
-                <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%;">
-                    <div style="flex: 1;">
-                        <nav id="changelist-filter" aria-labelledby="changelist-filter-header" style="display: flex; flex-wrap: wrap;">
-                            {% for spec in cl.filter_specs %}
-                                <div class="dropdown">
-                                    {% with field_name=spec.field.name|default:forloop.counter %}
-                                        {% with btn_id="filter-dropdown-btn-"|add:field_name list_id="filter-dropdown-list-"|add:field_name %}
-                                            <button class="br-button secondary small" type="button" id="{{ btn_id }}" data-toggle="dropdown" data-target="{{ list_id }}" aria-haspopup="true" aria-expanded="false" data-field-name="{{ spec.field.name }}" data-field-title="{{ spec.title|capfirst }}">
-                                                {{ spec.title|capfirst }}
-                                                <i class="fas fa-chevron-down" aria-hidden="true"></i>
-                                            </button>
-                                            <div class="br-list" id="{{ list_id }}" role="menu" aria-labelledby="{{ btn_id }}" hidden="hidden">
-                                                {% for choice in spec|choices:cl %}
-                                                    <button class="br-item filter_choice" type="button" data-value="{{ choice.value }}" data-display="{{ choice.display }}" data-field-name="{{ spec.field.name }}" data-field-title="{{ spec.title|capfirst }}" role="menuitem">{{ choice.display }}</button>
-                                                {% endfor %}
-                                            </div>
-                                        {% endwith %}
-                                    {% endwith %}
-                                </div>                                
-                            {% endfor %}
-                            {% if cl.is_facets_optional or cl.has_active_filters %}
-                                <div id="changelist-filter-extra-actions">
-                                    {% if cl.has_active_filters %}
-                                        <h3>
-                                            <a href="{{ cl.clear_all_filters_qs }}">&#10006; {% translate "Clear all filters" %}</a>
-                                        </h3>
+            <!-- #filter-bar -->
+                <div id="filter-bar" hidden="hidden">
+                    <!-- #filter-bar-widgets -->
+                        <div id="filter-bar-widgets">
+                            <button class="br-button circle small close" type="button" data-dismiss="filter" aria-label="Fechar filtros">
+                                <i class="fas fa-times" aria-hidden="true"></i>
+                            </button>
+                            <!-- #filter-bar-widgets-nav -->
+                                <nav id="filter-bar-widgets-nav" aria-labelledby="changelist-filter-header">
+                                    {% for spec in cl.filter_specs %}
+                                        <div class="dropdown">
+                                            {% with field_name=spec.field.name|default:forloop.counter %}
+                                                {% with btn_id="filter-dropdown-btn-"|add:field_name list_id="filter-dropdown-list-"|add:field_name %}
+                                                    <button class="br-button secondary small" type="button" id="{{ btn_id }}" data-toggle="dropdown" data-target="{{ list_id }}" aria-haspopup="true" aria-expanded="false" data-field-name="{{ spec.field.name }}" data-field-title="{{ spec.title|capfirst }}">
+                                                        {{ spec.title|capfirst }}
+                                                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                                                    </button>
+                                                    <div class="br-list" id="{{ list_id }}" role="menu" aria-labelledby="{{ btn_id }}" hidden="hidden">
+                                                        {% for choice in spec|choices:cl %}
+                                                            {# Extrai o valor do parâmetro da query_string para data-value #}
+                                                            {% if choice.query_string %}
+                                                                <button class="br-item filter_choice" type="button" data-value="{{ choice.query_string|cut:'?'|urlencode }}" data-display="{{ choice.display }}" data-field-name="{{ spec.field.name }}" data-field-title="{{ spec.title|capfirst }}" role="menuitem">{{ choice.display }}</button>
+                                                            {% else %}
+                                                                <button class="br-item filter_choice" type="button" data-value="" data-display="{{ choice.display }}" data-field-name="{{ spec.field.name }}" data-field-title="{{ spec.title|capfirst }}" role="menuitem">{{ choice.display }}</button>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endwith %}
+                                            {% endwith %}
+                                        </div>                                
+                                    {% endfor %}
+                                    {% if cl.is_facets_optional or cl.has_active_filters %}
+                                        <div id="changelist-filter-extra-actions">
+                                            {% if cl.has_active_filters %}
+                                                <a href="{{ cl.clear_all_filters_qs }}">&#10006; {% translate "Clear all filters" %}</a>
+                                            {% endif %}
+                                        </div>
                                     {% endif %}
-                                </div>
-                            {% endif %}
-                        </nav>
-                        <!-- Área para tags DSGovBR -->
-                        <div id="dsgovbr-filter-tags" style="margin: 12px 0; display: flex; flex-wrap: wrap; gap: 8px;"></div>
-                        <!-- Inputs hidden para filtros selecionados -->
-                        <form id="dsgovbr-filter-form" method="get" style="display: none;"></form>
+                                </nav>
+                            <!-- /#changelist-filter -->
+                        </div>
+                    <!-- /#filter-bar-widgets -->
+                    <!-- #filter-tags -->
+                    <div id="filter-tags" class="d-flex align-items-center">
+                        <!-- #filter-form -->
+                            <form id="changelist-filter" method="get">
+                                <div class="actions"></div>
+                                <button type="submit" name="index" class="br-button primary small">Filtrar</button>
+                                <button type="submit" name="index" class="br-button secondary small">Limpar filtro</button>
+                            </form>
+                        <!-- /#filter-form -->
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
-                        <button class="br-button primary small" type="button" id="dsgovbr-filter-apply" style="margin-bottom: 8px;">Filtrar</button>
-                        <button class="br-button circle small" type="button" data-dismiss="filter" aria-label="Fechar filtros">
-                            <i class="fas fa-times" aria-hidden="true"></i>
-                        </button>
-                    </div>
+                    <!-- /#filter-tags -->
                 </div>
+            <!-- /#filter-bar -->
 
-            </div>
-            <form id="changelist-form" method="post" action="" style="display: none;">
-                <button type="submit" style="display: none;" name="index">Submit</button>
-                <span class="action-counter"></span>
-                <div class="actions"></div>
-            </form>
-             
         {% endblock filters %}
     {% endif %}
 
     <!-- .selected-bar -->
     <div class="selected-bar">
         <div class="info">
-            <span class="count">0</span><span class="text">item selecionado</span>
+            <span class="action-counter-fixed">0</span>
+            <span class="action-counter">Este é do Django</span>
+            <span class="count" style="display:none">Este é do DSGovBR</span><span class="text" style="display:none">Este é do DSGovBR</span>
         </div>
         <div class="actions-trigger text-nowrap">
             <button class="br-button circle inverted" type="button" id="button-dropdown-selection" data-toggle="dropdown" data-target="target02-44728" aria-controls="target02-44728" aria-label="Ver mais opções de ação" aria-haspopup="true">
@@ -175,7 +182,7 @@
                     {% if action.field.choices %}
                         {% for choice in action.field.choices %}
                             {% if choice.0 %}
-                                <button class="br-item" type="button" data-toggle="" role="menuitem">{{ choice.1 }}</button>
+                                <button class="br-item action-select-btn" type="button" data-action-value="{{ choice.0 }}" data-action-label="{{ choice.1 }}" role="menuitem">{{ choice.1 }}</button>
                             {% endif %}
                         {% endfor %}
                     {% endif %}

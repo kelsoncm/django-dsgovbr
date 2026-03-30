@@ -42,7 +42,9 @@ def choices(spec, cl):
     Permite chamar spec.choices(cl) no template via filter.
     Uso: {% for choice in spec|choices:cl %}
     """
-    return spec.choices(cl)
+    choices_list = list(spec.choices(cl))
+    print('choices:', choices_list)
+    return choices_list
 
 # @register.simple_tag
 # def paginator_number(cl, i):
@@ -243,6 +245,14 @@ def items_for_result(cl, result, form):
                 if isinstance(attr, property) and hasattr(attr, "fget"):
                     boolean = getattr(attr.fget, "boolean", False)
                 result_repr = display_for_value(value, empty_value_display, boolean)
+                # Garante class="action-select" no input do checkbox de seleção
+                if field_name == "action_checkbox":
+                    result_repr = mark_safe(
+                        str(result_repr).replace(
+                            '<input type="checkbox"',
+                            '<input type="checkbox" class="action-select"'
+                        )
+                    )
                 if isinstance(value, (datetime.date, datetime.time)):
                     row_classes.append("nowrap")
             else:

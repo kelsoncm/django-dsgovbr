@@ -54,3 +54,78 @@ a.br-item {
 .br-input .feedback, .br-checkbox .feedback {
     color: var(--color-light);
 }
+
+#filter-bar {
+    background: #fff;
+    padding: 4px;
+    z-index: 110;
+    position: relative;
+    margin-top: -50px;
+}
+
+.br-button.close {
+    float: right;
+}
+
+#filter-bar-widgets {
+    padding-right: 16px;
+}
+
+#filter-bar-widgets-nav {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#changelist-filter {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+#filter-apply {
+    margin-bottom: 8px;
+}
+
+
+#filter-tags {
+    margin: 16px 0;
+}
+
+#filter-tags .br-tag {
+    font-size: 90%;
+}
+
+span.action-counter {
+    display: none;
+}
+
+.actions-trigger.dropdown .br-list {
+  left: auto !important;
+  right: 0 !important;
+}
+
+.selected-bar {
+    display: none;
+}
+
+
+.search-bar.show {
+    padding-left: 0;
+}
+
+.submit-row {
+    position: sticky;
+    top: 86px;
+    background: #fff;
+    z-index: 999;
+    padding: 16px 0;
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+    justify-content: space-between;
+}
+
+.float-right {
+    float: right;
+}
