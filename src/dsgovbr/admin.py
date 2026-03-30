@@ -208,7 +208,7 @@ class DSGovBrBaseModelAdmin(ModelAdmin):
             "jquery.init.js",
             "core.js",
             "admin/RelatedObjectLookups.js",
-            "actions.js", # Este arquivo causa problema pois não usamos neste tema o padrão do django admin de actions
+            # "actions.js", # Este arquivo causa problema pois não usamos neste tema o padrão do django admin de actions
             "urlify.js",
             "prepopulate.js",
             "vendor/xregexp/xregexp%s.js" % extra,

@@ -63,6 +63,10 @@ a.br-item {
     margin-top: -50px;
 }
 
+.filter-choices {
+    z-index: 10;
+}
+
 .br-button.close {
     float: right;
 }
@@ -76,20 +80,21 @@ a.br-item {
     flex-wrap: wrap;
 }
 
-#changelist-filter {
+#filter-line {
     display: flex;
     flex-direction: row;
-    gap: 8px;
-    align-items: flex-end;
+    column-gap: 10px;
+    justify-content: space-between;
+    margin: 16px 24px 16px 0;
+
 }
 
 #filter-apply {
     margin-bottom: 8px;
 }
 
-
 #filter-tags {
-    margin: 16px 0;
+    margin: 0 8px;
 }
 
 #filter-tags .br-tag {

@@ -124,11 +124,18 @@
                                                         {{ spec.title|capfirst }}
                                                         <i class="fas fa-chevron-down" aria-hidden="true"></i>
                                                     </button>
-                                                    <div class="br-list" id="{{ list_id }}" role="menu" aria-labelledby="{{ btn_id }}" hidden="hidden">
+                                                    <div class="br-list filter-choices" id="{{ list_id }}" role="menu" aria-labelledby="{{ btn_id }}" hidden="hidden">
                                                         {% for choice in spec|choices:cl %}
                                                             {# Extrai o valor do parâmetro da query_string para data-value #}
                                                             {% if choice.query_string %}
-                                                                <button class="br-item filter_choice" type="button" data-value="{{ choice.query_string|cut:'?'|urlencode }}" data-display="{{ choice.display }}" data-field-name="{{ spec.field.name }}" data-field-title="{{ spec.title|capfirst }}" role="menuitem">{{ choice.display }}</button>
+                                                                {% with param=choice.query_string|first_query_param %}
+                                                                    <button class="br-item filter_choice" type="button"
+                                                                        data-field-name="{{ param.name }}"
+                                                                        data-value="{{ param.value }}"
+                                                                        data-display="{{ choice.display }}"
+                                                                        data-field-title="{{ spec.title|capfirst }}"
+                                                                        role="menuitem">{{ choice.display }}</button>
+                                                                {% endwith %}
                                                             {% else %}
                                                                 <button class="br-item filter_choice" type="button" data-value="" data-display="{{ choice.display }}" data-field-name="{{ spec.field.name }}" data-field-title="{{ spec.title|capfirst }}" role="menuitem">{{ choice.display }}</button>
                                                             {% endif %}
@@ -146,20 +153,28 @@
                                         </div>
                                     {% endif %}
                                 </nav>
-                            <!-- /#changelist-filter -->
+                            <!-- /#filter-bar-widgets-nav -->
                         </div>
                     <!-- /#filter-bar-widgets -->
-                    <!-- #filter-tags -->
-                    <div id="filter-tags" class="d-flex align-items-center">
+                    <!-- #filter-line -->
+                    <div id="filter-line" class="d-flex align-items-center">
+                        <div style="display: flex; line-height: 32px;">
+                            Filtros:
+                            <!-- #filter-tags -->
+                            <div id="filter-tags" class="d-flex align-items-center">
+                            </div>
+                            <!-- /#filter-tags -->
+                        </div>
                         <!-- #filter-form -->
-                            <form id="changelist-filter" method="get">
+                            <div>
                                 <div class="actions"></div>
-                                <button type="submit" name="index" class="br-button primary small">Filtrar</button>
-                                <button type="submit" name="index" class="br-button secondary small">Limpar filtro</button>
-                            </form>
+                                <button type="submit" name="index" style="display:none"></button>
+                                <button type="submit" class="br-button primary small">Filtrar</button>
+                                <a href="{{ cl.clear_all_filters_qs }}" class="br-button secondary small">Limpar filtro</a>
+                            </di>
                         <!-- /#filter-form -->
                     </div>
-                    <!-- /#filter-tags -->
+                    <!-- /#filter-line -->
                 </div>
             <!-- /#filter-bar -->
 

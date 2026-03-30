@@ -64,7 +64,8 @@
                     <!-- .changelist-form-container -->
                         <div class="changelist-form-container">
 
-                            <form id="changelist-form" method="post"{% if cl.formset and cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
+                            <form id="changelist-form" method="get"{% if cl.formset and cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>
+                                {% comment %} {% csrf_token %} {% endcomment %}
                                 {% block result_content %}
                                     {% if action_form and actions_on_top and cl.show_admin_actions %}
                                         {% admin_actions %}
