@@ -152,8 +152,7 @@ class DSGovBrBaseModelAdmin(ModelAdmin):
             'show_save_as_new': False,
             'show_save_and_add_another': False,
             'show_save_and_continue': False,
-
-            'show_close': True,
+            'show_change_form_export': True,
 
             'can_view_related': can_view_related,
         }
@@ -215,6 +214,7 @@ class DSGovBrBaseModelAdmin(ModelAdmin):
             # JS customizado dos filtros DSGovBR
             "dsgovbr_admin_filters.js",
             "dsgovbr_admin_actions.js",
+            "dsgovbr_admin_submit_line.js",
         ]
         return parent_media + Media(js=["admin/js/%s" % url for url in js])
 
