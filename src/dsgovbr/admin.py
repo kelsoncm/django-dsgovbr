@@ -1,10 +1,14 @@
+from django import urls
 from django.utils.translation import gettext as _
+from django.http import HttpRequest, HttpResponse
+from dataclasses import dataclass
 from functools import update_wrapper
 from django.conf import settings
 from django.forms import Media
 from django.utils.text import capfirst
 from django.urls import path, reverse
-from django.contrib.admin import ModelAdmin
+from django.db.models import Model
+from django.contrib.admin import ModelAdmin, action
 from django.contrib.admin.exceptions import NotRegistered
 from django.contrib.admin.views.main import ChangeList
 from django.contrib.admin.utils import quote, unquote
@@ -13,6 +17,25 @@ from django.contrib.admin.helpers import AdminErrorList, AdminForm, InlineAdminF
 from django.contrib.admin.exceptions import DisallowedModelAdminToField
 from django.core.exceptions import PermissionDenied
 from import_export.admin import ImportExportMixin, ExportActionMixin
+
+
+@dataclass(frozen=True)
+class ActionSpec:
+    label: str
+    handler: str
+    icon: str = ""
+    css_class: str = ""
+    permission: str | None = None
+
+
+@dataclass(frozen=True)
+class ObjectToolSpec(ActionSpec):
+    pass
+
+
+@dataclass(frozen=True)
+class InstanceActionSpec(ActionSpec):
+    authorize: callable|None = None
 
 
 class DSGovBrChangeList(ChangeList):
@@ -62,9 +85,29 @@ class DSGovBrChangeList(ChangeList):
 
 class DSGovBrBaseModelAdmin(ModelAdmin):
     list_filter = []
+    object_tools: list[ObjectToolSpec]|None = None
+    instance_actions: list[InstanceActionSpec]|None = None
 
-    def get_changelist(self, request, **kwargs):
-        return DSGovBrChangeList
+    def validate_object_tools(self):
+        for object_tool in self.object_tools:
+            if not isinstance(object_tool, ObjectToolSpec):
+                raise TypeError(f"{object_tool} precisa ser ObjectToolSpec")
+            if not hasattr(self, object_tool.handler):
+                raise AttributeError(f"Handler '{object_tool.handler}' não existe em {self.__class__.__name__}")
+
+    def get_custom_urls(self):
+        # Gera rotas para todos métodos do self que terminam com _customview
+        urls = []
+        for attr_name in dir(self):
+            if attr_name.endswith('_customview') and callable(getattr(self, attr_name)):
+                urls.append(
+                    path(
+                        f"{attr_name}/",
+                        self.admin_site.admin_view(getattr(self, attr_name)),
+                        name=f"{self.opts.app_label}_{self.opts.model_name}_{attr_name}",
+                    )
+                )
+        return urls
 
     def get_urls(self):
         def wrap(view):
@@ -74,12 +117,32 @@ class DSGovBrBaseModelAdmin(ModelAdmin):
             wrapper.model_admin = self
             return update_wrapper(wrapper, view)
 
-        prefix = f"{self.opts.app_label}_{self.opts.model_name}"
+        self.validate_object_tools()
         urls = [url for url in super().get_urls() if url.pattern.name is not None]
+        prefix = f"{self.opts.app_label}_{self.opts.model_name}"
         urls.append(path("<path:object_id>/", wrap(self.preview_view), name=f"{prefix}_view"))
-        return urls
+        
+        return urls + self.get_custom_urls()
 
-    def preview_view(self, request, object_id, form_url="", extra_context=None):
+    def get_object_tool_actions(self, request: HttpRequest) -> list[ObjectToolSpec]:
+        return [
+            ObjectToolSpec(
+                label=_("Change"),
+                handler="change_view",
+                css_class="change-link",
+                permission=f"{self.opts.app_label}.change_{self.opts.model_name}",
+            )
+        ]
+
+    def get_changelist(self, request, **kwargs):
+        return DSGovBrChangeList
+
+    def changelist_view(self, request: HttpRequest, extra_context: dict|None=None) -> HttpResponse:
+        extra_context = extra_context or {}
+        extra_context["object_tool_actions"] = self.get_object_tool_actions(request)
+        return super().changelist_view(request, extra_context=extra_context)
+
+    def preview_view(self, request: HttpRequest, object_id: str, form_url: str="", extra_context: dict|None=None) -> HttpResponse:
         to_field = request.POST.get(TO_FIELD_VAR, request.GET.get(TO_FIELD_VAR))
         if to_field and not self.to_field_allowed(request, to_field):
             raise DisallowedModelAdminToField(f"The field {to_field} cannot be referenced.")
@@ -197,6 +260,18 @@ class DSGovBrBaseModelAdmin(ModelAdmin):
             )
             inline_admin_formsets.append(inline_admin_formset)
         return inline_admin_formsets
+
+    def get_instance_action_allowed(self, request: HttpRequest, instance: Model, action: InstanceActionSpec) -> bool:
+        return (action.permission is None or request.user.has_perm(action.permission)) and (action.authorize is None or action.authorize(request, instance))
+
+    def get_instance_actions(self, request: HttpRequest, instance: Model) -> list[InstanceActionSpec]|None:
+        return [a for a in (self.instance_actions or []) if self.is_valid_handler(a) and self.get_instance_action_allowed(request, instance, a)]
+
+    def is_valid_handler(self, a: ActionSpec) -> bool:
+        return hasattr(self, a.handler) and callable(getattr(self, a.handler))
+
+    def get_handler(self, spec: ActionSpec) -> callable|None:
+        return getattr(self, spec.handler) if hasattr(self, spec.handler) and callable(getattr(self, spec.handler)) else None
 
     @property
     def media(self):
