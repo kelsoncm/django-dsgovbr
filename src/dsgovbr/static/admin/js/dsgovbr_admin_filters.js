@@ -38,7 +38,6 @@ window.dsgovbrAdminFiltersInit = function() {
             var value = el.getAttribute('data-value');
             var display = el.getAttribute('data-display');
             if (!fieldName || !value) {
-                console.error('Filtro inválido, faltando fieldName ou value', { fieldName, value });
                 return;
             }
 

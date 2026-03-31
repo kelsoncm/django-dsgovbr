@@ -1,6 +1,5 @@
 // dsgovbr_admin_actions.js
 window.dsgovbrAdminActionsTogglerInit = function() {
-
     function getToggler() {
         return document.querySelector('#action-toggle');
     }
@@ -28,7 +27,6 @@ window.dsgovbrAdminActionsTogglerInit = function() {
         var actionCounter = getActionCounter();
         if (selectedBar && actionCounter) {
             var checked = getCheckboxesChecked();
-            console.log('Checkboxes checked:', selectedBar, actionCounter, checked);
             if (checked > 0) {
                 actionCounter.textContent = checked + ' selecionado' + (checked > 1 ? 's' : '');
                 selectedBar.style.display = 'flex';
