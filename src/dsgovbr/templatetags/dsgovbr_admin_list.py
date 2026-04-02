@@ -25,7 +25,6 @@ def choices(spec, cl):
     Uso: {% for choice in spec|choices:cl %}
     """
     choices_list = list(spec.choices(cl))
-    print('choices:', choices_list)
     return choices_list
 
 # Filtro para retornar apenas o primeiro par name/value da query string
