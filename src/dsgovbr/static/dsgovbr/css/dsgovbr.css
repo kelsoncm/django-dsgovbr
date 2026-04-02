@@ -142,3 +142,39 @@ span.action-counter {
 .float-right {
     float: right;
 }
+
+
+.br-table table.import-preview tr.new {
+    background-color: var(--green-cool-vivid-5);
+}
+.br-table table.import-preview tr.new ins {
+    background-color: var(--green-10) !important;
+    text-decoration: none;
+}
+.br-table table.import-preview tr.new del {
+    background-color: var(--red-vivid-10) !important;
+    text-decoration: none;
+}
+
+.br-table table.import-preview tr.update {
+    background-color: var(--blue-warm-vivid-10);
+}
+
+.br-table table.import-preview tr.update ins {
+    background-color: var(--green-10) !important;
+    text-decoration: none;
+}
+
+.br-table table.import-preview tr.update del {
+    background-color: var(--red-vivid-10) !important;
+}
+ 
+
+@media (prefers-color-scheme: dark) {
+    .br-table table.import-preview tr.new {
+        background-color: var(--green-cool-vivid-5);
+    }
+    .br-table table.import-preview tr.update {
+        background-color: var(--blue-warm-vivid-10);
+    }
+}
