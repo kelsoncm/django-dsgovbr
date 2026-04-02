@@ -51,9 +51,17 @@ a.br-item {
     text-decoration: none;
 }
 
-.br-input .feedback, .br-checkbox .feedback {
+.br-input .feedback, .br-checkbox > .feedback {
     color: var(--color-light);
 }
+
+.br-checkbox {
+    flex-direction: column;
+}
+.br-checkbox > span.feedback {
+    margin-left: 2em;
+}
+
 
 #filter-bar {
     background: #fff;
