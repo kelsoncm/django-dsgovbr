@@ -1,10 +1,9 @@
 {% load i18n admin_urls %}
 
 {% block object-tools-items %}
-  {% if has_add_permission %}
-    {% url cl.opts|admin_urlname:'add' as add_url %}
-    <a href="{% add_preserved_filters add_url is_popup to_field %}" class="br-item addlink">
-      {% blocktranslate with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktranslate %}
-    </a>
-  {% endif %}
+    {% for action in object_tool_actions %}
+        <a href="{% url action.admin_url_name %}" class="br-item {{ action.css_class }}">
+            {{ action.label }}
+        </a>
+    {% endfor %}
 {% endblock object-tools-items %}

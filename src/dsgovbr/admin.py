@@ -1,3 +1,5 @@
+from typing import Generator
+
 from django import urls
 from django.utils.translation import gettext as _
 from django.http import HttpRequest, HttpResponse
@@ -26,6 +28,22 @@ class ActionSpec:
     icon: str = ""
     css_class: str = ""
     permission: str | None = None
+    authorize: callable|None = None
+    admin: callable|None = None
+
+
+
+    def is_allowed(self, admin: ModelAdmin, request: HttpRequest) -> bool:
+        return (self.permission and request.user.has_perm(self.permission)) or (self.authorize and self.authorize(request))
+
+    @property
+    def admin_url_name(self) -> str:
+        """
+        Retorna o nome da URL admin customizada para este handler.
+        Uso: action.get_admin_url_name(admin)
+        """
+        print(f"admin:{self.admin.opts.app_label}_{self.admin.opts.model_name}_{self.handler}")  # DEBUG
+        return f"admin:{self.admin.opts.app_label}_{self.admin.opts.model_name}_{self.handler}"
 
 
 @dataclass(frozen=True)
@@ -35,7 +53,7 @@ class ObjectToolSpec(ActionSpec):
 
 @dataclass(frozen=True)
 class InstanceActionSpec(ActionSpec):
-    authorize: callable|None = None
+    pass
 
 
 class DSGovBrChangeList(ChangeList):
@@ -85,28 +103,22 @@ class DSGovBrChangeList(ChangeList):
 
 class DSGovBrBaseModelAdmin(ModelAdmin):
     list_filter = []
-    object_tools: list[ObjectToolSpec]|None = None
+    object_tool_actions: list[ObjectToolSpec]|None = None
     instance_actions: list[InstanceActionSpec]|None = None
 
-    def validate_object_tools(self):
-        for object_tool in self.object_tools:
-            if not isinstance(object_tool, ObjectToolSpec):
-                raise TypeError(f"{object_tool} precisa ser ObjectToolSpec")
-            if not hasattr(self, object_tool.handler):
-                raise AttributeError(f"Handler '{object_tool.handler}' não existe em {self.__class__.__name__}")
 
     def get_custom_urls(self):
         # Gera rotas para todos métodos do self que terminam com _customview
         urls = []
-        for attr_name in dir(self):
-            if attr_name.endswith('_customview') and callable(getattr(self, attr_name)):
-                urls.append(
-                    path(
-                        f"{attr_name}/",
-                        self.admin_site.admin_view(getattr(self, attr_name)),
-                        name=f"{self.opts.app_label}_{self.opts.model_name}_{attr_name}",
-                    )
-                )
+        # for attr_name in dir(self):
+        #     if attr_name.endswith('_customview') and callable(getattr(self, attr_name)):
+        #         urls.append(
+        #             path(
+        #                 f"{attr_name}/",
+        #                 self.admin_site.admin_view(getattr(self, attr_name)),
+        #                 name=f"{self.opts.app_label}_{self.opts.model_name}_{attr_name}",
+        #             )
+        #         )
         return urls
 
     def get_urls(self):
@@ -117,29 +129,28 @@ class DSGovBrBaseModelAdmin(ModelAdmin):
             wrapper.model_admin = self
             return update_wrapper(wrapper, view)
 
-        self.validate_object_tools()
         urls = [url for url in super().get_urls() if url.pattern.name is not None]
         prefix = f"{self.opts.app_label}_{self.opts.model_name}"
         urls.append(path("<path:object_id>/", wrap(self.preview_view), name=f"{prefix}_view"))
         
-        return urls + self.get_custom_urls()
+        return super().get_urls() + self.get_custom_urls()
 
     def get_object_tool_actions(self, request: HttpRequest) -> list[ObjectToolSpec]:
-        return [
-            ObjectToolSpec(
-                label=_("Change"),
-                handler="change_view",
-                css_class="change-link",
-                permission=f"{self.opts.app_label}.change_{self.opts.model_name}",
-            )
-        ]
+        return []
+
+    def get_valid_object_tools_actions(self, request: HttpRequest) -> Generator[ObjectToolSpec, None, None]:
+        for object_tool in self.get_object_tool_actions(request):
+            if not isinstance(object_tool, ObjectToolSpec):
+                raise TypeError(f"{object_tool} precisa ser ObjectToolSpec")
+            if object_tool.is_allowed(self, request):
+                yield object_tool
 
     def get_changelist(self, request, **kwargs):
         return DSGovBrChangeList
 
     def changelist_view(self, request: HttpRequest, extra_context: dict|None=None) -> HttpResponse:
         extra_context = extra_context or {}
-        extra_context["object_tool_actions"] = self.get_object_tool_actions(request)
+        extra_context["object_tool_actions"] = self.get_valid_object_tools_actions(request)
         return super().changelist_view(request, extra_context=extra_context)
 
     def preview_view(self, request: HttpRequest, object_id: str, form_url: str="", extra_context: dict|None=None) -> HttpResponse:
@@ -295,4 +306,22 @@ class DSGovBrBaseModelAdmin(ModelAdmin):
 
 
 class DSGovBrModelAdmin(ImportExportMixin, ExportActionMixin, DSGovBrBaseModelAdmin):
-    pass
+
+    def get_object_tool_actions(self, request: HttpRequest) -> list[ObjectToolSpec]:
+        return super().get_object_tool_actions(request) + [
+            ObjectToolSpec(
+                label=_("Import"),
+                handler="import",
+                css_class="import-link",
+                permission=f"{self.opts.app_label}.change_{self.opts.model_name}",
+                admin=self,
+            ),
+            ObjectToolSpec(
+                label=_("Export"),
+                handler="export",
+                css_class="export-link",
+                permission=f"{self.opts.app_label}.change_{self.opts.model_name}",
+                admin=self,
+            ),
+        ]
+
