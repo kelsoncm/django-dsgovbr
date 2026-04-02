@@ -52,10 +52,11 @@
         {% if field.field.initial_field %}
           <p style="padding: 0;">{% translate "This exporter will export the following fields: " %}</p>
           {% if form.visible_fields|length >= 2 %}
-            <div>
+            <div class="br-checkbox">
               <input type="checkbox" class="select-toggle" name="select-all-toggle" 
                     onchange="onSelectToggleChange(event)" checked>
-              <label style="font-weight: bold;" for="select-all-toggle">{% translate "Select all" %}
+              <label style="font-weight: bold;" for="select-all-toggle">
+                {% translate "Select all" %}
               </label>
             </div>
           {% endif %}
@@ -69,7 +70,7 @@
         {% if field.field.widget.attrs.readonly %}
           {{ field.field.value }}
           {{ field.as_hidden }}
-          {% else %}
+        {% else %}
           {{ field }}
         {% endif %}
 
@@ -94,7 +95,11 @@
   </div>
 
   <div class="submit-row">
-    <input type="submit" class="default" value="{% translate "Submit" %}">
+    <div>
+      <span class="br-magic-button">
+        <input type="submit" class="br-button primary" value="{% translate "Submit" %}">
+      </span>
+    </div>
   </div>
 </form>
 {% endblock %}
