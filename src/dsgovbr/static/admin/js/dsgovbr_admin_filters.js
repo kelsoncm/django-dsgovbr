@@ -55,8 +55,24 @@ window.dsgovbrAdminFiltersInit = function() {
             tag.className = 'br-tag interaction small';
             tag.setAttribute('data-field-name', fieldName);
             tag.setAttribute('style', "padding-right: 0;");
-            tag.innerHTML = '<span class="br-tag__text">' + fieldTitle + ': ' + display + '</span>' +
-                '<button class="br-tag__close br-button inverted" type="button" aria-label="Fechar"><i class="fas fa-times" aria-hidden="true"></i></button>';
+
+            var textSpan = document.createElement('span');
+            textSpan.className = 'br-tag__text';
+            textSpan.textContent = fieldTitle + ': ' + display;
+            tag.appendChild(textSpan);
+
+            var closeButton = document.createElement('button');
+            closeButton.className = 'br-tag__close br-button inverted';
+            closeButton.type = 'button';
+            closeButton.setAttribute('aria-label', 'Fechar');
+
+            var closeIcon = document.createElement('i');
+            closeIcon.className = 'fas fa-times';
+            closeIcon.setAttribute('aria-hidden', 'true');
+            closeButton.appendChild(closeIcon);
+
+            tag.appendChild(closeButton);
+
             if (tagsContainer) tagsContainer.appendChild(tag);
 
             var input = document.createElement('input');
