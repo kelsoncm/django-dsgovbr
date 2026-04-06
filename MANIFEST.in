@@ -1,3 +1,25 @@
 include README.md
-recursive-include dsgovbr/static *
-recursive-include dsgovbr/templates *
+include VERSIONS.md
+include PUBLISHING.md
+include .gitlab-ci.yml
+include .github/workflows/*.yml
+include pyproject.toml
+include setup.py
+include .vscode/settings.json
+recursive-include src/dsgovbr/static *
+recursive-include src/dsgovbr/templates *
+recursive-include src/dsgovbr/templatetags *
+recursive-include src/dsgovbr/context_processors.py
+recursive-include src/dsgovbr/admin.py
+recursive-include src/dsgovbr/apps.py
+recursive-include src/dsgovbr/__init__.py
+recursive-include src/dsgovbr/migrations *
+recursive-include src/dsgovbr/* *
+# NÃO incluir a pasta examples no sdist
+prune examples
+prune README.md
+prune VERSIONS.md
+prune PUBLISHING.md
+prune .gitlab-ci.yml
+prune .github/workflows/*.yml
+prune .vscode/settings.json
