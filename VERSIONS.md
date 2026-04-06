@@ -1,5 +1,55 @@
 # Histórico de Versões
 
+## 5.2.4
+
+### Refatoração e Expansão dos Templates Administrativos
+
+- **Formulários Django**: Refatoração completa dos templates de formulários, com criação de arquivos dedicados para widgets e atributos, como `attrs.html`, `input.html`, `multiwidget.html` e diversos outros para tipos de campos (checkbox, radio, select, etc.).
+  - Melhoria na estrutura, clareza e manutenibilidade dos formulários.
+  - Facilita futuras customizações e ampliações.
+- **Histórico de Objetos**: Refatoração dos templates de histórico (`object_history.html`, `object_history_form.html`, `object_history_list.html`, `submit_line.html`) para melhor apresentação, organização e lógica de exibição.
+- **Templates de Listagem**: Criação e reorganização de templates para resultados de listagem, cabeçalho, rodapé e paginação, incluindo:
+  - `change_list_dsgovbr_results.html`, `change_list_footer.html`, `change_list_header.html`, `pagination.html`.
+  - Remoção do template antigo `change_list_results.html`.
+- **Aprimoramento dos Templates de Ações e Filtros**:
+  - Refatoração dos templates `actions.html`, `filter.html`, `filters.html` e inclusão de novos filtros dinâmicos e dropdowns para melhor usabilidade.
+  - Implementação de lógica de filtros dinâmicos na interface administrativa, permitindo aplicar/remover filtros de forma interativa.
+- **Aprimoramento dos Templates de Ferramentas de Objeto**:
+  - Novos templates e lógica para exibição de ferramentas de objeto e ações de instância na interface administrativa.
+  - Melhoria na apresentação e usabilidade dos botões de ação.
+- **Aprimoramento dos Templates de Exportação/Importação**:
+  - Ajustes visuais e funcionais nos templates de exportação/importação, incluindo melhorias no checkbox "Selecionar todos" e botões de envio.
+- **Aprimoramento dos Templates de Login e Histórico**:
+  - Melhorias de layout e experiência do usuário nos templates de login e histórico de objetos.
+
+### Novos Arquivos e Estrutura
+
+- **Novos templates criados**: Diversos arquivos adicionados para granularidade e reutilização, especialmente em `src/dsgovbr/templates/django/forms/widgets/` e `src/dsgovbr/templates/admin/`.
+- **Novos arquivos JavaScript**: Adição de `dsgovbr_admin_actions.js`, `dsgovbr_admin_filters.js`, `dsgovbr_admin_submit_line.js` para manipulação dinâmica de ações, filtros e botões na interface administrativa.
+
+### Melhorias de Usabilidade e Acessibilidade
+
+- **Dropdowns e Botões**: Inclusão de dropdowns para ações de submissão e filtros, tornando a navegação mais intuitiva.
+- **Aprimoramento Visual**: Ajustes de CSS em `dsgovbr.css` para tabelas, botões, feedbacks e alinhamento de elementos.
+- **Acessibilidade**: Melhoria na navegação por teclado e uso de elementos semânticos nos templates.
+
+### Refatoração e Organização do Código
+
+- **Admin Python**: Criação e refatoração de `src/dsgovbr/admin.py` para centralizar lógica de ações, ferramentas de objeto e filtros dinâmicos.
+- **Template Tags**: Expansão de `templatetags/dsgovbr_admin_list.py` e `templatetags/dsgovbr.py` para suportar novas funcionalidades e simplificar geração de listas/resultados.
+- **Remoção de Código Morto**: Exclusão de código obsoleto e simplificação de imports.
+
+### Estatísticas
+
+- **56 arquivos alterados**
+- **551 inserções(+), 322 deleções(-)**
+- **Criação de mais de 40 novos arquivos de template e JS**
+
+### Observações
+
+- Esta versão representa uma grande evolução na estrutura dos templates administrativos, tornando o projeto mais modular, flexível e alinhado ao Design System GovBR.
+- Recomenda-se revisar customizações locais de templates administrativos ao atualizar para esta versão.
+
 ## 5.2.3
 
 ### Melhorias na Interface Administrativa

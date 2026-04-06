@@ -10,7 +10,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-dsgovbr',
-    version='5.2.3',
+    version='5.2.4',
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
