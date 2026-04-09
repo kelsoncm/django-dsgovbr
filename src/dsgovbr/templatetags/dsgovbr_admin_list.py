@@ -1,7 +1,12 @@
 from django.utils.translation import gettext as _
 import datetime
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
-from django.contrib.admin.utils import display_for_field, display_for_value, label_for_field, lookup_field
+from django.contrib.admin.utils import (
+    display_for_field,
+    display_for_value,
+    label_for_field,
+    lookup_field,
+)
 from django.contrib.admin.views.main import ORDER_VAR
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
@@ -27,16 +32,17 @@ def choices(spec, cl):
     choices_list = list(spec.choices(cl))
     return choices_list
 
+
 # Filtro para retornar apenas o primeiro par name/value da query string
 @register.filter
 def first_query_param(query_string):
     """Retorna o primeiro par name/value da query string."""
     if not query_string:
         return {}
-    for pair in query_string.lstrip('?').split('&'):
-        if '=' in pair:
-            k, v = pair.split('=', 1)
-            return {'name': k, 'value': v}
+    for pair in query_string.lstrip("?").split("&"):
+        if "=" in pair:
+            k, v = pair.split("=", 1)
+            return {"name": k, "value": v}
     return {}
 
 
@@ -147,6 +153,7 @@ def result_headers(cl):
             ),
         }
 
+
 def items_for_result(cl, result, form):
     """
     Generate the actual list of data.
@@ -183,14 +190,6 @@ def items_for_result(cl, result, form):
                 if isinstance(attr, property) and hasattr(attr, "fget"):
                     boolean = getattr(attr.fget, "boolean", False)
                 result_repr = display_for_value(value, empty_value_display, boolean)
-                # Garante class="action-select" no input do checkbox de seleção
-                if field_name == "action_checkbox":
-                    result_repr = mark_safe(
-                        str(result_repr).replace(
-                            '<input type="checkbox"',
-                            '<input type="checkbox" class="action-select"'
-                        )
-                    )
                 if isinstance(value, (datetime.date, datetime.time)):
                     row_classes.append("nowrap")
             else:
@@ -212,7 +211,8 @@ def items_for_result(cl, result, form):
                 ):
                     row_classes.append("nowrap")
         row_class = mark_safe(' class="%s"' % " ".join(row_classes))
-        # If list_display_links not defined, add the link tag to the first field
+        # If list_display_links not defined, add the link tag to the first
+        # field
         if link_to_changelist:
             table_tag = "td" if first else "td"
             first = False
@@ -221,7 +221,9 @@ def items_for_result(cl, result, form):
             # display just the result's representation.
             try:
                 url = cl.url_for_result(result)
-            except NoReverseMatch:
+                print(f"URL for result {result}: {url}")
+            except NoReverseMatch as e:
+                print(f"URL for result_repr {result_repr}: {e}")
                 link_or_text = result_repr
             else:
                 url = add_preserved_filters(
@@ -249,9 +251,9 @@ def items_for_result(cl, result, form):
                 "<{}{}>{}</{}>", table_tag, row_class, link_or_text, table_tag
             )
         else:
-            # By default the fields come from ModelAdmin.list_editable, but if we pull
-            # the fields out of the form instead of list_editable custom admins
-            # can provide fields on a per request basis
+            # By default the fields come from ModelAdmin.list_editable, but if
+            # we pull the fields out of the form instead of list_editable
+            # custom admins can provide fields on a per request basis
             if (
                 form
                 and field_name in form.fields
@@ -265,6 +267,18 @@ def items_for_result(cl, result, form):
             yield format_html("<td{}>{}</td>", row_class, result_repr)
     if form and not form[cl.model._meta.pk.name].is_hidden:
         yield format_html("<td>{}</td>", form[cl.model._meta.pk.name])
+
+
+class ResultList(list):
+    """
+    Wrapper class used to return items in a list_editable changelist, annotated
+    with the form object for error reporting purposes. Needed to maintain
+    backwards compatibility with existing admin templates.
+    """
+
+    def __init__(self, form, *items):
+        self.form = form
+        super().__init__(*items)
 
 
 class ResultList(list):
@@ -319,10 +333,9 @@ def result_list_tag(parser, token):
         parser,
         token,
         func=result_list,
-        template_name="change_list_dsgovbr_results.html",
+        template_name="change_list_results.html",
         takes_context=False,
     )
-
 
 
 @register.simple_tag
